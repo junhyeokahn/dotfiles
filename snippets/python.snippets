@@ -540,6 +540,16 @@ def ${1:name}(self):
 	${2:return self._$1}$0
 endsnippet
 
+snippet ps
+@property
+def ${1:name}(self):
+	${2:return self._$1}$0
+
+@$1.setter
+def $1(self, value):
+	self._$1 = value
+endsnippet
+
 snippet rwprop "Read write property" b
 def ${1:name}():
 	`!p snip.rv = triple_quotes(snip) if t[2] else ''
