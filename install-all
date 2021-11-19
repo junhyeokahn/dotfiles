@@ -20,18 +20,10 @@ if [ $(uname -s) = 'Darwin' ]; then
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
   echo "Updating homebrew"
-  brew install git tmux vim reattach-to-user-namespace ctags-exuberant cmake
+  brew install git tmux vim reattach-to-user-namespace ctags-exuberant cmake clang-format
 
-  brew tap waltarix/homebrew-customs
-  brew install waltarix/homebrew-customs/tmux
-
-  brew cask install iterm2
   xcode-select --install
 
 fi
-
-
-git config --global user.email "junhyeokahn91@gmail.com"
-git config --global user.name "junhyeokahn"
 
 source ./install-vim

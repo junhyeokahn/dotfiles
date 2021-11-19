@@ -37,26 +37,6 @@ elif [ -d ~/dotfiles/iTerm2-Color-Schemes/ ]; then
   ~/dotfiles/iTerm2-Color-Schemes/tools/preview.rb ~/.vim/plugged/seoul256.vim/iterm2/seoul256.itermcolors
 fi
 
-ccmake() {
-  CXX="$HOME/dotfiles/clang/cc_args.py clang++" cmake ..
-}
-
-function gpm() {
-  git add -A
-  git commit -a -m $1
-  git push origin master
-}
-
-# Gurobi
-export GUROBI_HOME="/Library/gurobi800/mac64"
-export GRB_LICENSE_FILE=/Users/junhyeokahn/gurobi/gurobi.lic
-
-# Mosek
-export MOSEK_HOME="/Users/junhyeokahn/mosek/8/tools/platform/osx64x86"
-export MOSEKLM_LICENSE_FILE=/Users/junhyeokahn/mosek/mosek.lic
-export PATH=$PATH:/Users/junhyeokahn/mosek/8/tools/platform/osx64x86/bin
-export DYLD_LIBRARY_PATH="/Users/junhyeokahn/mosek/8/tools/platform/osx64x86/bin":"$DYLD_LIBRARY_PATH"
-
 export CLICOLOR=1;
 export LSCOLORS=exfxcxdxbxegedabagacad;
 

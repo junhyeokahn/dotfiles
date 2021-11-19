@@ -56,29 +56,22 @@ Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/limelight.vim'
 Plug 'junegunn/vim-slash'
-Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'vim-scripts/a.vim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
 Plug 'Townk/vim-autoclose'
-Plug 'tpope/vim-fugitive'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'qpkorr/vim-bufkill'
 Plug 'yegappan/grep'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'rhysd/clever-f.vim'
-Plug 'majutsushi/tagbar'
 Plug 'hdima/python-syntax'
 Plug 'lervag/vimtex'
 Plug 'junegunn/vim-journal'
-Plug 'junegunn/goyo.vim'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'tpope/vim-surround'
 Plug 'ludovicchabant/vim-gutentags'
-Plug 'davidhalter/jedi-vim'
 Plug 'tpope/vim-eunuch'
 Plug 'machakann/vim-highlightedyank'
 Plug 'rhysd/vim-clang-format'
@@ -97,8 +90,6 @@ let Grep_Default_Options='-rn'
 nnoremap <silent> <F3> :Rgrep<CR>
 nnoremap <silent> <c-p> :FZF<CR>
 
-nnoremap <silent> <F9> :TagbarToggle<CR>
-
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 let g:easy_align_delimiters = {}
@@ -109,24 +100,15 @@ let g:easy_align_delimiters['d'] = {
 
 let g:table_mode_header_fillchar='='
 
-autocmd! User GoyoEnter Limelight
-autocmd! User GoyoLeave Limelight!
-
 " 1. Coloer Scheme
 let g:seoul256_background=237
 colo seoul256
 let g:airline_theme='zenburn'
-let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
 set laststatus=2
 highlight CursorLine cterm=none
 
 " 2. C,C++
-let g:UltiSnipsUsePythonVersion=3
-let g:UltiSnipsExpandTrigger="<Tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-n>"
-let g:UltiSnipsJumpBackwardTrigger="<c-p>"
-
 let g:cpp_class_scope_highlight=1
 let g:cpp_member_variable_highlight=1
 let g:cpp_experimental_template_highlight=1
@@ -134,10 +116,6 @@ let g:cpp_concepts_highlight=1
 map <A-]> :vsp <CR> <C-w>l:exec("tag ".expand("<cword>"))<CR>
 
 " 3. Python
-let python_highlight_all=1
-let g:jedi#use_splits_not_buffers="right"
-let g:jedi#popup_on_dot=0
-let g:jedi#completions_enabled=0
 
 " 4. Latex
 let g:vimtex_compiler_latexmk={'callback':0, 'continuous':0}
