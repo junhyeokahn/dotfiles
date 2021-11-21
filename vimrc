@@ -103,6 +103,11 @@ let g:easy_align_delimiters['d'] = {
 
 let g:table_mode_header_fillchar='='
 
+let g:UltiSnipsUsePythonVersion=3
+let g:UltiSnipsExpandTrigger="<Tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-n>"
+let g:UltiSnipsJumpBackwardTrigger="<c-p>"
+
 " 1. Coloer Scheme
 let g:seoul256_background=237
 colo seoul256
