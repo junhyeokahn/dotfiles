@@ -44,7 +44,7 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
     sudo apt-get -y install tmux curl vim ctags-exuberant clang-format
 
-    source ./min-install-vim
+    source ./install-vim
     source ~/dotfiles/seoul256-gnome-terminal/seoul256-dark.sh
 
 else
