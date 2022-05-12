@@ -8,22 +8,45 @@
 cd $(dirname $BASH_SOURCE)
 BASE=$(pwd)
 
-for rc in bashrc bash_profile bash_prompt vimrc tmux.conf; do
-  mkdir -pv bak
-  [ -e ~/.$rc ] && mv -v ~/.$rc bak/.$rc
-  ln -sfv $BASE/$rc ~/.$rc
-done
+if [ "$(uname)" == "Darwin" ]; then
+    for rc in bashrc bash_profile bash_prompt vimrc tmux.conf; do
+      mkdir -pv bak
+      [ -e ~/.$rc ] && mv -v ~/.$rc bak/.$rc
+      ln -sfv $BASE/$rc ~/.$rc
+    done
 
-if [ $(uname -s) = 'Darwin' ]; then
-  # Homebrew
-  [ -z "$(which brew)" ] &&
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.bashrc
+    echo 'export BASH_SILENCE_DEPRECATION_WARNING=1' >> ~/.bashrc
+    echo 'export PATH="/opt/homebrew/bin:$PATH"' >> ~/.bashrc
 
-  echo "Updating homebrew"
-  brew install git tmux vim reattach-to-user-namespace ctags-exuberant cmake clang-format
+    #### put this at the last of conda initialize if you use conda ####
+    # [[ -z $TMUX ]] || conda deactivate; conda activate base
 
-  xcode-select --install
+    [ -z "$(which brew)" ] &&
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
+    echo "Updating homebrew"
+    brew install tmux vim reattach-to-user-namespace ctags-exuberant cmake clang-format
+
+    xcode-select --install
+
+    source ./install-vim
+
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+
+    for rc in vimrc bash_profile bash_prompt tmux.conf; do
+      mkdir -pv bak
+      [ -e ~/.$rc ] && mv -v ~/.$rc bak/.$rc
+      ln -sfv $BASE/$rc ~/.$rc
+    done
+
+    echo 'setxkbmap -option caps:ctrl_modifier' >> ~/.bashrc
+
+    sudo apt-get -y install tmux curl vim ctags-exuberant clang-format
+
+    source ./min-install-vim
+    source ~/dotfiles/seoul256-gnome-terminal/seoul256-dark.sh
+
+else
+    echo "[error] os not detected"
 fi
-
-source ./install-vim
