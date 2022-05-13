@@ -1,3 +1,12 @@
 [submodule "gnome-terminal"]
 	path = gnome-terminal
 	url = https://github.com/dracula/gnome-terminal
+[submodule "iterm"]
+	path = iterm
+	url = https://github.com/dracula/iterm.git
+[submodule "seoul256.vim"]
+	path = seoul256.vim
+	url = git@github.com:junhyeokahn/seoul256.vim.git
+[submodule "seoul256-gnome-terminal"]
+	path = seoul256-gnome-terminal
+	url = git@github.com:junhyeokahn/seoul256-gnome-terminal.git
