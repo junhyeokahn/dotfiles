@@ -12,6 +12,7 @@ set termencoding=utf-8
 set nocompatible
 syntax on
 set ruler
+set number
 set bs=indent,eol,start
 set autoindent
 set smartindent
@@ -19,6 +20,7 @@ set pastetoggle=<F8>
 set nowrap
 set textwidth=0
 set colorcolumn=80
+set cursorline
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
@@ -82,7 +84,7 @@ Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
-
+Plug 'airblade/vim-gitgutter'
 call plug#end()
 
 " =============================================================================
@@ -93,13 +95,12 @@ let Grep_Default_Options='-rn'
 
 let g:UltiSnipsUsePythonVersion=3
 let g:UltiSnipsExpandTrigger="<Tab>"
-"let g:UltiSnipsJumpForwardTrigger="<c-n>"
-"let g:UltiSnipsJumpBackwardTrigger="<c-p>"
 
 let g:seoul256_background=237
 colo seoul256
 let g:airline_theme='zenburn'
 
+set updatetime=100
 set laststatus=2
 highlight CursorLine cterm=none
 
@@ -137,6 +138,7 @@ nnoremap <silent> <F3> :Rgrep<CR>
 nnoremap <leader>f :LspReferences<CR>
 nnoremap <leader>r :LspRename<CR>
 nnoremap <leader>d :LspDocumentDiagnostics<CR>
+nnoremap <leader>h :LspHover<CR>
 nnoremap <silent> <c-]> :LspDefinition<CR>
 
 "let g:lsp_diagnostics_enabled = 0
