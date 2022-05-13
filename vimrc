@@ -51,7 +51,7 @@ nnoremap <silent> <F5> :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :noh
 " =============================================================================
 call plug#begin('~/.vim/plugged')
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/seoul256.vim'
+Plug 'junhyeokahn/seoul256.vim'
 Plug 'junegunn/vim-slash'
 Plug 'vim-scripts/a.vim'
 Plug 'scrooloose/nerdcommenter'
