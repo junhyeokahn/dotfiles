@@ -4,3 +4,9 @@
 [submodule "seoul256-gnome-terminal"]
 	path = seoul256-gnome-terminal
 	url = https://github.com/junhyeokahn/seoul256-gnome-terminal.git
+[submodule "iterm"]
+	path = iterm
+	url = https://github.com/dracula/iterm.git
+[submodule "gnome-terminal"]
+	path = gnome-terminal
+	url = https://github.com/dracula/gnome-terminal
