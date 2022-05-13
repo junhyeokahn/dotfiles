@@ -26,7 +26,7 @@ if [ "$(uname)" == "Darwin" ]; then
       ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
     echo "Updating homebrew"
-    brew install tmux vim reattach-to-user-namespace ctags-exuberant cmake clang-format
+    brew install tmux vim reattach-to-user-namespace ctags-exuberant cmake clang-format llvm
 
     xcode-select --install
 
@@ -42,7 +42,7 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
     echo 'setxkbmap -option caps:ctrl_modifier' >> ~/.bashrc
 
-    sudo apt-get -y install tmux curl vim ctags clang-format
+    sudo apt-get -y install tmux curl vim ctags clang-format clangd-9
 
     source ./install-vim
     source ~/dotfiles/seoul256-gnome-terminal/seoul256-dark.sh
