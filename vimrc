@@ -143,11 +143,9 @@ nnoremap <silent> <c-]> :LspDefinition<CR>
 
 "let g:lsp_diagnostics_enabled = 0
 
-"cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ..
 if has("unix")
     let s:uname = system("uname")
     if s:uname == "Darwin\n"
-        " macosx for clangd (6.0)
         if executable('clangd')
             augroup lsp_clangd
                 autocmd!
@@ -173,7 +171,6 @@ if has("unix")
     endif
 endif
 
-" python ($ pip install python-language-server)
 if executable('pyls')
     augroup lsp_clangd
         autocmd User lsp_setup call lsp#register_server({

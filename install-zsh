@@ -28,7 +28,7 @@ if [ "$(uname)" "==" "Darwin" ]; then
     source install-vim &&
     echo 'Set up iTerm2 color preset'
 
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+elif [ "$(expr substr $(uname -s) 1 5)" "==" "Linux" ]; then
 
     for rc in zshrc vimrc tmux.conf; do
       mkdir -pv bak
@@ -43,7 +43,7 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting &&
 
     source install-vim &&
-    source gnome-terminal/install.sh
+    echo 'Set up gnome-terminal color preset'
 
 else
     echo "[error] os not detected"
