@@ -15,7 +15,7 @@ if [ "$(uname)" == "Darwin" ]; then
       ln -sfv $BASE/$rc ~/.$rc
     done
 
-    echo 'export PATH="/opt/homebrew/bin:$PATH"' >> ~/.zshrc
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
 
     #### put this at the last of conda initialize if you use conda ####
     # [[ -z $TMUX ]] || conda deactivate; conda activate base
