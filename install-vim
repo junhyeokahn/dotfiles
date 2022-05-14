@@ -5,7 +5,6 @@
 # Junhyeok Ahn ( junhyeokahn91@gmail.com ) #
 ############################################
 
-cd $(dirname $BASH_SOURCE)
 BASE=$(pwd)
 
 export GIT_SSL_NO_VERIFY=true

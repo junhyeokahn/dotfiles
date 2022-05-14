@@ -5,35 +5,27 @@
 # Junhyeok Ahn ( junhyeokahn91@gmail.com ) #
 ############################################
 
-cd $(dirname $BASH_SOURCE)
 BASE=$(pwd)
 
-if [ "$(uname)" == "Darwin" ]; then
+if [ "$(uname)" "==" "Darwin" ]; then
     for rc in zshrc vimrc tmux.conf; do
       mkdir -pv bak
       [ -e ~/.$rc ] && mv -v ~/.$rc bak/.$rc
       ln -sfv $BASE/$rc ~/.$rc
     done
 
-    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc &&
+    echo 'export PATH=$PATH:/opt/homebrew/opt/llvm/bin' >> ~/.zshrc &&
+
 
     #### put this at the last of conda initialize if you use conda ####
     # [[ -z $TMUX ]] || conda deactivate; conda activate base
-
-    [ -z "$(which brew)" ] &&
-      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-
-    echo "Updating homebrew"
-    brew install zsh tmux vim reattach-to-user-namespace ctags-exuberant cmake clang-format llvm
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-    xcode-select --install
 
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &&
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions &&
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting &&
 
-    source ./install-vim
+    source install-vim &&
     echo 'Set up iTerm2 color preset'
 
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
@@ -44,17 +36,14 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
       ln -sfv $BASE/$rc ~/.$rc
     done
 
-    echo 'setxkbmap -option caps:ctrl_modifier' >> ~/.bashrc
-
-    sudo apt-get -y install zsh tmux curl vim ctags clang-format clangd-9
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    echo 'setxkbmap -option caps:ctrl_modifier' >> ~/.zshrc &&
 
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &&
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions &&
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting &&
 
-    source ./install-vim
-    ./gnome-terminal/install.sh
+    source install-vim &&
+    source gnome-terminal/install.sh
 
 else
     echo "[error] os not detected"

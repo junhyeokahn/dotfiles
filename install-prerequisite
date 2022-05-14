@@ -1,0 +1,27 @@
+#!/bin/zsh
+
+############################################
+# install-prerequisite                     #
+# Junhyeok Ahn ( junhyeokahn91@gmail.com ) #
+############################################
+
+cd
+BASE=$(pwd)
+
+if [ "$(uname)" "==" "Darwin" ]; then
+    [ -z "$(which brew)" ] &&
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" &&
+    xcode-select --install &&
+
+    echo "Updating homebrew"
+    brew install zsh tmux vim reattach-to-user-namespace ctags-exuberant cmake clang-format llvm &&
+    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" &&
+
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+
+    sudo apt-get -y install zsh tmux curl vim ctags clang-format clangd-9 &&
+    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" &&
+
+else
+    echo "[error] os not detected"
+fi

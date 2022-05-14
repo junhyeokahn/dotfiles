@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ############################################
-# install-bash.sh                          #
+# install-bash                             #
 # Junhyeok Ahn ( junhyeokahn91@gmail.com ) #
 ############################################
 
@@ -21,14 +21,6 @@ if [ "$(uname)" == "Darwin" ]; then
     #### put this at the last of conda initialize if you use conda ####
     # [[ -z $TMUX ]] || conda deactivate; conda activate base
 
-    [ -z "$(which brew)" ] &&
-      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-
-    echo "Updating homebrew"
-    brew install tmux vim reattach-to-user-namespace ctags-exuberant cmake clang-format llvm
-
-    xcode-select --install
-
     source ./install-vim
 
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
@@ -40,8 +32,6 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     done
 
     echo 'setxkbmap -option caps:ctrl_modifier' >> ~/.bashrc
-
-    sudo apt-get -y install tmux curl vim ctags clang-format clangd-9
 
     source ./install-vim
     source ~/dotfiles/seoul256-gnome-terminal/seoul256-dark.sh
