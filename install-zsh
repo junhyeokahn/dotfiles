@@ -7,43 +7,32 @@
 
 BASE=$(pwd)
 
+for rc in zshrc vimrc tmux.conf; do
+  mkdir -pv bak
+  [ -e ~/.$rc ] && mv -v ~/.$rc bak/.$rc
+  ln -sfv $BASE/$rc ~/.$rc
+done
+
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &&
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions &&
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting &&
+
+source install-vim &&
+echo 'Set up terminal theme'
+
 if [ "$(uname)" "==" "Darwin" ]; then
-    for rc in zshrc vimrc tmux.conf; do
-      mkdir -pv bak
-      [ -e ~/.$rc ] && mv -v ~/.$rc bak/.$rc
-      ln -sfv $BASE/$rc ~/.$rc
-    done
 
     echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc &&
     echo 'export PATH=$PATH:/opt/homebrew/opt/llvm/bin' >> ~/.zshrc &&
-
+    echo 'export CLICOLOR=1;' >> ~/.zshrc &&
+    echo 'export LSCOLORS=exfxcxdxbxegedabagacad;' >> ~/.zshrc
 
     #### put this at the last of conda initialize if you use conda ####
     # [[ -z $TMUX ]] || conda deactivate; conda activate base
 
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &&
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions &&
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting &&
-
-    source install-vim &&
-    echo 'Set up iTerm2 color preset'
-
 elif [ "$(expr substr $(uname -s) 1 5)" "==" "Linux" ]; then
 
-    for rc in zshrc vimrc tmux.conf; do
-      mkdir -pv bak
-      [ -e ~/.$rc ] && mv -v ~/.$rc bak/.$rc
-      ln -sfv $BASE/$rc ~/.$rc
-    done
-
-    echo 'setxkbmap -option caps:ctrl_modifier' >> ~/.zshrc &&
-
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &&
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions &&
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting &&
-
-    source install-vim &&
-    echo 'Set up gnome-terminal color preset'
+    echo 'setxkbmap -option caps:ctrl_modifier' >> ~/.zshrc
 
 else
     echo "[error] os not detected"
