@@ -5,13 +5,13 @@ Personal dotfiles for *NIX systems
 ```
 $ cd ~ && git clone --recursive https://github.com/junhyeokahn/dotfiles.git
 $ cd ~/dotfiles && source ./install-prerequisite
-'''
+```
 Then
-'''
+```
 $ cd ~/dotfiles && source ./install-zsh
 ```
 or
-'''
+```
 $ cd ~/dotfiles && source ./install-bash
 ```
 Finally, install
