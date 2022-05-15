@@ -19,4 +19,4 @@ Finally, install
 - ```$ pip install yapf```
 - ```$ pip install python-language-server```
 
-To generate ```compile_commands.json```, run ```cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ..```
+To generate ```compile_commands.json```, run ```cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ..``` or see [this](https://github.com/hedronvision/bazel-compile-commands-extractor) for bazel
