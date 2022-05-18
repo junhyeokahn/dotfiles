@@ -142,6 +142,7 @@ nnoremap <leader>h :LspHover<CR>
 nnoremap <silent> <c-]> :LspDefinition<CR>
 
 "let g:lsp_diagnostics_enabled = 0
+let g:lsp_document_code_action_signs_enabled = 0
 
 if has("unix")
     let s:uname = system("uname")
