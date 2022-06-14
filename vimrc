@@ -53,12 +53,12 @@ nnoremap <silent> <F5> :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :noh
 " =============================================================================
 call plug#begin('~/.vim/plugged')
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junhyeokahn/seoul256.vim'
 Plug 'junegunn/vim-slash'
 Plug 'vim-scripts/a.vim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'arcticicestudio/nord-vim'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'thomasfaingnaert/vim-lsp-snippets'
@@ -85,20 +85,32 @@ Plug 'prabirshrestha/vim-lsp'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
 call plug#end()
 
 " =============================================================================
 " Plugin Setting
 " =============================================================================
-"let g:gutentags_ctags_executable='/opt/homebrew/bin/ctags'
 let Grep_Default_Options='-rn'
 
 let g:UltiSnipsUsePythonVersion=3
 let g:UltiSnipsExpandTrigger="<Tab>"
 
-let g:seoul256_background=237
-colo seoul256
-let g:airline_theme='zenburn'
+colorscheme nord
+let g:airline_theme='nord'
+
+let g:airline_powerline_fonts = 1
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+let g:airline#extensions#branch#enabled = 1
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ''
 
 set updatetime=100
 set laststatus=2
@@ -138,15 +150,17 @@ nnoremap <silent> <F3> :Rgrep<CR>
 nnoremap <leader>f :LspReferences<CR>
 nnoremap <leader>r :LspRename<CR>
 nnoremap <leader>d :LspDocumentDiagnostics<CR>
+nnoremap <leader>q :LspCodeAction<CR>
 nnoremap <leader>h :LspHover<CR>
 nnoremap <silent> <c-]> :LspDefinition<CR>
 
-"let g:lsp_diagnostics_enabled = 0
 let g:lsp_document_code_action_signs_enabled = 0
 
+"cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ..
 if has("unix")
     let s:uname = system("uname")
     if s:uname == "Darwin\n"
+        " macosx for clangd (6.0)
         if executable('clangd')
             augroup lsp_clangd
                 autocmd!
@@ -172,6 +186,7 @@ if has("unix")
     endif
 endif
 
+" python ($ pip install python-language-server)
 if executable('pyls')
     augroup lsp_clangd
         autocmd User lsp_setup call lsp#register_server({
