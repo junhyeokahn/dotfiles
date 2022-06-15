@@ -112,7 +112,7 @@ let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
 
-set updatetime=100
+"set updatetime=2000
 set laststatus=2
 highlight CursorLine cterm=none
 
@@ -199,3 +199,4 @@ endif
 
 let g:lsp_highlights_enabled = 1
 let g:lsp_textprop_enabled = 1
+"let g:lsp_diagnostics_enabled = 0         " disable diagnostics support
