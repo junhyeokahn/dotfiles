@@ -8,7 +8,7 @@
 cd $(dirname $BASH_SOURCE)
 BASE=$(pwd)
 
-for rc in bashrc bash_profile bash_prompt vimrc tmux.conf; do
+for rc in bash_profile bash_prompt vimrc tmux.conf; do
   mkdir -pv bak
   [ -e ~/.$rc ] && mv -v ~/.$rc bak/.$rc
   ln -sfv $BASE/$rc ~/.$rc
@@ -28,8 +28,6 @@ if [ "$(uname)" == "Darwin" ]; then
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 
     echo 'setxkbmap -option caps:ctrl_modifier' >> ~/.bashrc
-
-    source ~/dotfiles/seoul256-gnome-terminal/seoul256-dark.sh
 
 else
     echo "[error] os not detected"
