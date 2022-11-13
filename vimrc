@@ -53,6 +53,7 @@ nnoremap <silent> <F5> :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :noh
 " =============================================================================
 call plug#begin('~/.vim/plugged')
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-slash'
 Plug 'vim-scripts/a.vim'
 Plug 'scrooloose/nerdcommenter'
@@ -144,7 +145,7 @@ augroup autoformat_settings
   autocmd FileType vue AutoFormatBuffer prettier
 augroup END
 
-nnoremap <silent> <c-p> :FZF<CR>
+nnoremap <silent> <c-p> :GFiles<CR>
 nnoremap <silent> <F3> :Rgrep<CR>
 
 nnoremap <leader>f :LspReferences<CR>
