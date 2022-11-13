@@ -145,7 +145,18 @@ augroup autoformat_settings
   autocmd FileType vue AutoFormatBuffer prettier
 augroup END
 
-nnoremap <silent> <c-p> :GFiles<CR>
+" https://github.com/junegunn/fzf.vim/issues/47#issuecomment-646115681
+fun! FzfOmniFiles()
+  let git_status = system('git status')
+  if v:shell_error != 0
+    :Files
+  else
+    let git_files_cmd = ":GitFiles --exclude-standard --cached --others"
+    call fzf#vim#gitfiles('--exclude-standard --cached --others', {'dir': getcwd()})
+  endif
+endfun
+nnoremap <silent> <C-p> :call FzfOmniFiles()<CR>
+
 nnoremap <silent> <F3> :Rgrep<CR>
 
 nnoremap <leader>f :LspReferences<CR>
