@@ -152,7 +152,7 @@ fun! FzfOmniFiles()
     :Files
   else
     let git_files_cmd = ":GitFiles --exclude-standard --cached --others"
-    call fzf#vim#gitfiles('--exclude-standard --cached --others', {'dir': getcwd()})
+    call fzf#vim#gitfiles('--exclude-standard --cached --others', {'dir': getcwd(), 'options': ['--info=inline', '--preview', 'cat {}']})
   endif
 endfun
 nnoremap <silent> <C-p> :call FzfOmniFiles()<CR>
