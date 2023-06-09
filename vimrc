@@ -16,7 +16,7 @@ set number
 set bs=indent,eol,start
 set autoindent
 set smartindent
-set pastetoggle=<F8>
+set pastetoggle=<F2>
 set nowrap
 set textwidth=0
 set colorcolumn=80
@@ -41,12 +41,13 @@ set nobackup
 set list
 set listchars=tab:»\ ,trail:·,extends:>,precedes:<
 set clipboard=unnamed
-
+set laststatus=2
+highlight CursorLine cterm=none
 let mapleader=','
 let maplocalleader=','
-nnoremap <Leader>s :%s/\<<C-r><C-w>\>/
-nnoremap <Leader>e :e %:h
-nnoremap <silent> <F5> :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
+nnoremap <leader>s :%s/\<<C-r><C-w>\>/
+nnoremap <leader>e :e %:h
+nnoremap <leader>f :Rgrep<CR>
 
 " =============================================================================
 " Plugins
@@ -89,6 +90,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'segeljakt/vim-silicon'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+Plug 'puremourning/vimspector'
 call plug#end()
 
 " =============================================================================
@@ -115,9 +117,6 @@ let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
 
-"set updatetime=2000
-set laststatus=2
-highlight CursorLine cterm=none
 
 let g:cpp_class_scope_highlight=1
 let g:cpp_member_variable_highlight=1
@@ -159,22 +158,18 @@ fun! FzfOmniFiles()
 endfun
 nnoremap <silent> <C-p> :call FzfOmniFiles()<CR>
 
-nnoremap <silent> <F3> :Rgrep<CR>
-
-nnoremap <leader>f :LspReferences<CR>
-nnoremap <leader>r :LspRename<CR>
-nnoremap <leader>d :LspDocumentDiagnostics<CR>
-nnoremap <leader>q :LspCodeAction<CR>
-nnoremap <leader>h :LspHover<CR>
+nnoremap <leader>lf :LspReferences<CR>
+nnoremap <leader>lr :LspRename<CR>
+nnoremap <leader>ld :LspDocumentDiagnostics<CR>
+nnoremap <leader>lq :LspCodeAction<CR>
+nnoremap <leader>lh :LspHover<CR>
 nnoremap <silent> <c-]> :LspDefinition<CR>
 
 let g:lsp_document_code_action_signs_enabled = 0
 
-"cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ..
 if has("unix")
     let s:uname = system("uname")
     if s:uname == "Darwin\n"
-        " macosx for clangd (6.0)
         if executable('clangd')
             augroup lsp_clangd
                 autocmd!
@@ -186,7 +181,6 @@ if has("unix")
             augroup end
         endif
     else
-        " linux for clangd-9
         if executable('clangd-9')
             augroup lsp_clangd
                 autocmd!
@@ -200,7 +194,6 @@ if has("unix")
     endif
 endif
 
-" python ($ pip install python-language-server)
 if executable('pyls')
     augroup lsp_clangd
         autocmd User lsp_setup call lsp#register_server({
@@ -213,4 +206,11 @@ endif
 
 let g:lsp_highlights_enabled = 1
 let g:lsp_textprop_enabled = 1
-"let g:lsp_diagnostics_enabled = 0         " disable diagnostics support
+let g:lsp_diagnostics_enabled = 0
+
+nmap <leader>dc <Plug>VimspectorContinue
+nmap <leader>ds <Plug>VimspectorStop
+nmap <leader>db <Plug>VimspectorToggleBreakpoint
+nmap <leader>dn <Plug>VimspectorStepOver
+nmap <leader>di <Plug>VimspectorStepInto
+nmap <leader>do <Plug>VimspectorStepOut
