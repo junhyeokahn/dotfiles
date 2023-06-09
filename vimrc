@@ -206,7 +206,7 @@ endif
 
 let g:lsp_highlights_enabled = 1
 let g:lsp_textprop_enabled = 1
-let g:lsp_diagnostics_enabled = 0
+let g:lsp_diagnostics_enabled = 1
 
 nmap <leader>dc <Plug>VimspectorContinue
 nmap <leader>ds <Plug>VimspectorStop
