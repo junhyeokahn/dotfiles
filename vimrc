@@ -16,7 +16,7 @@ set number
 set bs=indent,eol,start
 set autoindent
 set smartindent
-set pastetoggle=<F2>
+set pastetoggle=<F8>
 set nowrap
 set textwidth=0
 set colorcolumn=80
@@ -47,7 +47,7 @@ let mapleader=','
 let maplocalleader=','
 nnoremap <leader>s :%s/\<<C-r><C-w>\>/
 nnoremap <leader>e :e %:h
-nnoremap <leader>f :Rgrep<CR>
+nnoremap <silent> <F3> :Rgrep<CR>
 
 " =============================================================================
 " Plugins
@@ -153,10 +153,11 @@ fun! FzfOmniFiles()
     :Files
   else
     let git_files_cmd = ":GitFiles --exclude-standard --cached --others"
-    call fzf#vim#gitfiles('--exclude-standard --cached --others', {'dir': getcwd(), 'options': ['--info=inline', '--preview', 'cat {}']})
+    call fzf#vim#gitfiles('--exclude-standard --cached --others', {'dir': getcwd()})
   endif
 endfun
 nnoremap <silent> <C-p> :call FzfOmniFiles()<CR>
+
 
 nnoremap <leader>lf :LspReferences<CR>
 nnoremap <leader>lr :LspRename<CR>
@@ -208,9 +209,36 @@ let g:lsp_highlights_enabled = 1
 let g:lsp_textprop_enabled = 1
 let g:lsp_diagnostics_enabled = 1
 
+let g:silicon = {
+      \   'theme':              'Nord',
+      \   'font':                  'Hack',
+      \   'background':         '#AAAAFF',
+      \   'shadow-color':       '#555555',
+      \   'line-pad':                   2,
+      \   'pad-horiz':                  0,
+      \   'pad-vert':                   0,
+      \   'shadow-blur-radius':         0,
+      \   'shadow-offset-x':            0,
+      \   'shadow-offset-y':            0,
+      \   'line-number':           v:true,
+      \   'round-corner':          v:false,
+      \   'window-controls':       v:true,
+      \ }
+let g:silicon['output'] = '~/Pictures/silicon-{time:%Y-%m-%d-%H%M%S}.png'
+
 nmap <leader>dc <Plug>VimspectorContinue
 nmap <leader>ds <Plug>VimspectorStop
 nmap <leader>db <Plug>VimspectorToggleBreakpoint
 nmap <leader>dn <Plug>VimspectorStepOver
 nmap <leader>di <Plug>VimspectorStepInto
 nmap <leader>do <Plug>VimspectorStepOut
+nnoremap <leader>dx :VimspectorReset
+let g:vimspector_sign_priority = {
+  \    'vimspectorBP':          999,
+  \    'vimspectorBPCond':      999,
+  \    'vimspectorBPLog':       3,
+  \    'vimspectorBPDisabled':  3,
+  \    'vimspectorNonActivePC': 3,
+  \    'vimspectorPC':          999,
+  \    'vimspectorPCBP':        999,
+  \ }
