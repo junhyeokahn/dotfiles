@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-set -ex
 
-if [ "$(uname)" "==" "Darwin" ]; then
+if [[ "$(uname -s)" == "Darwin" ]]; then
     [ -z "$(which brew)" ] &&
       ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" &&
     xcode-select --install &&
-    brew install git cmake clang-format llvm curl gcc wget ripgrep fzf
-elif [ "$(expr substr $(uname -s) 1 5)" "==" "Linux" ]; then
+    brew install git cmake clang-format llvm curl gcc wget ripgrep fzf pyright
+elif [[ "$(uname -s)" == "Linux" ]]; then
     sudo apt-get -y install curl vim clang-format gcc wget unzip ripgrep xclip npm fzf
 else
     echo "OS not detected"

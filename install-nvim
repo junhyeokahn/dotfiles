@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-set -ex
 
 VERSION="v0.10.2"
-if [ "$(uname)" "==" "Darwin" ]; then
+if [[ "$(uname -s)" == "Darwin" ]]; then
     NAME="nvim-macos-arm64"
     curl -L https://github.com/neovim/neovim/releases/download/${VERSION}/${NAME}.tar.gz --output ${NAME}.tar.gz
     xattr -c ./${NAME}.tar.gz
@@ -10,7 +9,7 @@ if [ "$(uname)" "==" "Darwin" ]; then
     echo "alias nvim='$(pwd)/${NAME}/bin/nvim'" >> ~/.bashrc
     rm ${NAME}.tar.gz
 
-elif [ "$(expr substr $(uname -s) 1 5)" "==" "Linux" ]; then
+elif [[ "$(uname -s)" == "Linux" ]]; then
     NAME="nvim.appimage"
     curl -L https://github.com/neovim/neovim/releases/download/${VERSION}/${NAME} --output ${NAME}
     chmod u+x ${NAME}

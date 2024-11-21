@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-set -ex
 
-if [ "$(uname)" "==" "Darwin" ]; then
+if [[ "$(uname -s)" == "Darwin" ]]; then
     curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
 
     FONT_DIRECTORY="/Library/Fonts"
@@ -9,7 +8,7 @@ if [ "$(uname)" "==" "Darwin" ]; then
     brew install starship
     echo 'eval "$(/opt/homebrew/bin/starship init bash --print-full-init)"' >> ~/.bashrc
 
-elif [ "$(expr substr $(uname -s) 1 5)" "==" "Linux" ]; then
+elif [[ "$(uname -s)" == "Linux" ]]; then
     curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
     ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/
     cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
