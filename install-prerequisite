@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -ex
+
+if [ "$(uname)" "==" "Darwin" ]; then
+    [ -z "$(which brew)" ] &&
+      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" &&
+    xcode-select --install &&
+    brew install git cmake clang-format llvm curl gcc wget ripgrep fzf
+elif [ "$(expr substr $(uname -s) 1 5)" "==" "Linux" ]; then
+    sudo apt-get -y install curl vim clang-format gcc wget unzip ripgrep xclip npm fzf
+else
+    echo "OS not detected"
+    exit 1
+fi
+
+echo 'export FZF_DEFAULT_OPTS=" --color=bg+:#ccd0da,bg:#eff1f5,spinner:#dc8a78,hl:#d20f39 --color=fg:#4c4f69,header:#d20f39,info:#8839ef,pointer:#dc8a78 --color=marker:#dc8a78,fg+:#4c4f69,prompt:#8839ef,hl+:#d20f39"' >> ~/.bashrc

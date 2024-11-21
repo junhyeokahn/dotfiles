@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -ex
+
+if [ "$(uname)" "==" "Darwin" ]; then
+    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+
+    FONT_DIRECTORY="/Library/Fonts"
+
+    brew install starship
+    echo 'eval "$(/opt/homebrew/bin/starship init bash --print-full-init)"' >> ~/.bashrc
+
+elif [ "$(expr substr $(uname -s) 1 5)" "==" "Linux" ]; then
+    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
+    ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/
+    cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/
+    cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/
+    sed -i "s|Icon=kitty|Icon=/home/$USER/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty*.desktop
+    sed -i "s|Exec=kitty|Exec=/home/$USER/.local/kitty.app/bin/kitty|g" ~/.local/share/applications/kitty*.desktop
+
+    FONT_DIRECTORY="/usr/share/fonts"
+
+    curl -sS https://starship.rs/install.sh | sh
+    echo 'eval "$(starship init bash)"' >> ~/.bashrc
+else
+    echo "OS not detected"
+    exit 1
+fi
+
+for file in kitty.conf zoom_toggle.py custom-hints.py current-theme.conf; do
+    cp $file ~/.config/kitty/$file
+done
+
+curl -L -o JetBrainsMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip
+curl -L -o NerdFontsSymbolsOnly.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/NerdFontsSymbolsOnly.zip
+
+for font in JetBrainsMono NerdFontsSymbolsOnly; do
+    sudo unzip ${font}.zip -d ${FONT_DIRECTORY}/${font}
+    rm ${font}.zip
+done
+
+starship preset pure-preset -o ~/.config/starship.toml

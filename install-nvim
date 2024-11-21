@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -ex
+
+VERSION="v0.10.2"
+if [ "$(uname)" "==" "Darwin" ]; then
+    NAME="nvim-macos-arm64"
+    curl -L https://github.com/neovim/neovim/releases/download/${VERSION}/${NAME}.tar.gz --output ${NAME}.tar.gz
+    xattr -c ./${NAME}.tar.gz
+    tar xzvf ${NAME}.tar.gz
+    echo "alias nvim='$(pwd)/${NAME}/bin/nvim'" >> ~/.bashrc
+    rm ${NAME}.tar.gz
+
+elif [ "$(expr substr $(uname -s) 1 5)" "==" "Linux" ]; then
+    NAME="nvim.appimage"
+    curl -L https://github.com/neovim/neovim/releases/download/${VERSION}/${NAME} --output ${NAME}
+    chmod u+x ${NAME}
+    echo "alias nvim='$(pwd)/${NAME}'" >> ~/.bashrc
+else
+    echo "OS not detected"
+    exit 1
+fi
+
+git clone https://github.com/junhyeokahn/nvim-config.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
