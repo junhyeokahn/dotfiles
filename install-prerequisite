@@ -1,15 +1,37 @@
-#!/usr/bin/env bash
-
 if [[ "$(uname -s)" == "Darwin" ]]; then
-    [ -z "$(which brew)" ] &&
-      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" &&
-    xcode-select --install &&
-    brew install git cmake clang-format llvm curl gcc wget ripgrep fzf pyright
+    if ! command -v brew >/dev/null 2>&1; then
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+        echo >> /Users/junhyeokahn/.zprofile
+        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/junhyeokahn/.zprofile
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
+
+    # Install Xcode Command Line Tools
+    if ! xcode-select -p >/dev/null 2>&1; then
+        xcode-select --install
+    fi
+
+    # Install essential packages using Homebrew
+    brew install git cmake clang-format llvm curl gcc wget ripgrep pyright fzf
+
+    # Set up fzf
+    echo 'source <(fzf --zsh)' >> ~/.zshrc
+    echo 'export FZF_DEFAULT_OPTS="--color=bg+:#ccd0da,bg:#eff1f5,spinner:#dc8a78,hl:#d20f39 --color=fg:#4c4f69,header:#d20f39,info:#8839ef,pointer:#dc8a78 --color=marker:#dc8a78,fg+:#4c4f69,prompt:#8839ef,hl+:#d20f39"' >> ~/.zshrc
+
 elif [[ "$(uname -s)" == "Linux" ]]; then
+    # Update package list and upgrade installed packages
+    sudo apt-get update && sudo apt-get -y upgrade
+
+    # Install basic libraries
     sudo apt-get -y install curl vim clang-format gcc wget unzip ripgrep xclip npm fzf
+
+    # Set up fzf
+    echo 'eval "$(fzf --bash)"' >> ~/.basrc
+    echo 'export FZF_DEFAULT_OPTS="--color=bg+:#ccd0da,bg:#eff1f5,spinner:#dc8a78,hl:#d20f39 --color=fg:#4c4f69,header:#d20f39,info:#8839ef,pointer:#dc8a78 --color=marker:#dc8a78,fg+:#4c4f69,prompt:#8839ef,hl+:#d20f39"' >> ~/.bashrc
+
 else
     echo "OS not detected"
     exit 1
 fi
 
-echo 'export FZF_DEFAULT_OPTS=" --color=bg+:#ccd0da,bg:#eff1f5,spinner:#dc8a78,hl:#d20f39 --color=fg:#4c4f69,header:#d20f39,info:#8839ef,pointer:#dc8a78 --color=marker:#dc8a78,fg+:#4c4f69,prompt:#8839ef,hl+:#d20f39"' >> ~/.bashrc
+echo 'Installation completed. Please restart your terminal or source your rc file to apply changes.'
