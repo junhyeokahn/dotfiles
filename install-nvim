@@ -32,6 +32,6 @@ else
     exit 1
 fi
 
-git clone https://github.com/junhyeokahn/nvim-config.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
+git clone https://github.com/shbang91/nvim-config.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
 
 echo 'Installation completed. Please restart your terminal or source your rc file to apply changes.'
