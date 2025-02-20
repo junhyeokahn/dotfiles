@@ -53,6 +53,6 @@ done
 
 # Configure Starship
 echo "Configuring Starship..."
-starship preset pure-preset -o ~/.config/starship.toml
+cp startship.toml ~/.config/starship.toml
 
 echo "Installation completed. Please restart your terminal or source your rc file to apply changes."
