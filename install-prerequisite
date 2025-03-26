@@ -28,7 +28,10 @@ elif [[ "$(uname -s)" == "Linux" ]]; then
     sudo apt-get update && sudo apt-get -y upgrade
 
     # Install basic libraries
-    sudo apt-get -y install curl vim clang-format gcc wget unzip ripgrep xclip npm fzf
+    sudo apt-get -y install curl vim clang-format gcc wget unzip ripgrep xclip npm
+
+    # Install fzf from source
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && bash ~/.fzf/install
 
     # Set up fzf
     echo 'eval "$(fzf --bash)"' >> ~/.basrc
