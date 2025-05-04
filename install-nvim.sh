@@ -1,4 +1,4 @@
-VERSION="v0.10.2"
+VERSION="v0.11.1"
 LOCAL_DIR="${HOME}/.local"
 LOCAL_BIN_DIR="${LOCAL_DIR}/bin"
 
