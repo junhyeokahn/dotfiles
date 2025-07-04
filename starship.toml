@@ -1,84 +1,55 @@
+# Global prompt format
 format = """
 $username\
-$hostname\
 $directory\
 $git_branch\
 $git_status\
-$fill\
-$python\
-$conda\
-$time\n  \
-[󱞪](fg:iris) \
 """
 
-palette = "rose-pine"
+# Use our custom “kanagawa-dragon” palette
+palette = "kanagawa-dragon"
 
-[palettes.rose-pine]
-overlay = '#26233a'
-love = '#eb6f92'
-gold = '#f6c177'
-rose = '#ebbcba'
-pine = '#31748f'
-foam = '#9ccfd8'
-iris = '#c4a7e7'
-
-[directory]
-format = "[](fg:overlay)[ $path ]($style)[](fg:overlay) "
-style = "bg:overlay fg:pine"
-truncation_length = 0
-
-[fill]
-style = "fg:overlay"
-symbol = " "
-
-[git_branch]
-format = "[](fg:overlay)[ $symbol $branch ]($style)[](fg:overlay) "
-style = "bg:overlay fg:foam"
-symbol = ""
-
-[git_status]
-disabled = false
-style = "bg:overlay fg:love"
-format = '[](fg:overlay)([$all_status$ahead_behind]($style))[](fg:overlay) '
-up_to_date = '[ ✓ ](bg:overlay fg:iris)'
-untracked = '[?\($count\)](bg:overlay fg:gold)'
-stashed = '[\$](bg:overlay fg:iris)'
-modified = '[!\($count\)](bg:overlay fg:gold)'
-renamed = '[»\($count\)](bg:overlay fg:iris)'
-deleted = '[✘\($count\)](style)'
-staged = '[++\($count\)](bg:overlay fg:gold)'
-ahead = '[⇡\(${count}\)](bg:overlay fg:foam)'
-diverged = '⇕[\[](bg:overlay fg:iris)[⇡\(${ahead_count}\)](bg:overlay fg:foam)[⇣\(${behind_count}\)](bg:overlay fg:rose)[\]](bg:overlay fg:iris)'
-behind = '[⇣\(${count}\)](bg:overlay fg:rose)'
-ignore_submodules = true
-
-[time]
-disabled = false
-format = " [](fg:overlay)[ $time 󰴈 ]($style)[](fg:overlay)"
-style = "bg:overlay fg:rose"
-time_format = "%I:%M%P"
-use_12hr = true
+[palettes.kanagawa-dragon]
+black  = "#1D1C19"
+red    = "#c4746e"
+yellow = "#c4b28a"
+pink   = "#a292a3"
+green  = "#87a987"
+aqua   = "#8ea4a2"
+orange = "#b98d7b"
 
 [username]
-disabled = false
-format = "[](fg:overlay)[ 󰧱 $user ]($style)[](fg:overlay) "
-show_always = true
-style_root = "bg:overlay fg:iris"
-style_user = "bg:overlay fg:iris"
+disabled     = false
+show_always  = true
+format       = "[$user ]($style)"
+style_root   = "bg:black fg:orange"
+style_user   = "bg:black fg:orange"
 
-[hostname]
-ssh_symbol='󰢹'
-style = "bg:overlay fg:iris"
-format = "[](fg:overlay)[ $ssh_symbol $hostname ]($style)[](fg:overlay) "
+[directory]
+format            = "[$path ]($style)"
+style             = "bg:black fg:green"
+truncation_length = 0
 
-[python]
-style = "bg:overlay fg:pine"
-format = ' [](fg:overlay)[ $symbol$version(\($virtualenv\)) ]($style)[](fg:overlay)'
-disabled = false
-symbol = ' '
+[git_branch]
+symbol = ""
+format = "[$symbol $branch ]($style)"
+style  = "bg:black fg:aqua"
 
-[conda]
-style = "bg:overlay fg:pine"
-format = " [](fg:overlay)[ $symbol$environment ]($style)[](fg:overlay)"
-disabled = false
-symbol = '🅒 '
+[git_status]
+disabled          = false
+style             = "bg:black fg:red"
+format            = '([$all_status$ahead_behind ]($style))'
+
+up_to_date        = '[✓](bg:black fg:orange)'
+untracked         = '[?\($count\)](bg:black fg:yellow)'
+stashed           = '[\$](bg:black fg:orange)'
+modified          = '[!\($count\)](bg:black fg:yellow)'
+renamed           = '[»\($count\)](bg:black fg:orange)'
+deleted           = '[✘\($count\)](bg:black fg:red)'
+staged            = '[++\($count\)](bg:black fg:yellow)'
+
+ahead             = '[⇡\(${count}\)](bg:black fg:aqua)'
+behind            = '[⇣\(${count}\)](bg:black fg:pink)'
+diverged          = '⇕[\[](bg:black fg:orange)[⇡\(${ahead_count}\)](bg:black fg:aqua)[⇣\(${behind_count}\)](bg:black fg:pink)[\]](bg:black fg:orange)'
+
+ignore_submodules = true
