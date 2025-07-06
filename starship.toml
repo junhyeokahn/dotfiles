@@ -4,13 +4,16 @@ $username\
 $directory\
 $git_branch\
 $git_status\
+$fill\
+$python\
+$conda\n\
+[󱞪](fg:orange) \
 """
 
 # Use our custom “kanagawa-dragon” palette
 palette = "kanagawa-dragon"
 
 [palettes.kanagawa-dragon]
-black  = "#1D1C19"
 red    = "#c4746e"
 yellow = "#c4b28a"
 pink   = "#a292a3"
@@ -22,34 +25,49 @@ orange = "#b98d7b"
 disabled     = false
 show_always  = true
 format       = "[$user ]($style)"
-style_root   = "bg:black fg:orange"
-style_user   = "bg:black fg:orange"
+style_root   = "fg:orange"
+style_user   = "fg:orange"
 
 [directory]
 format            = "[$path ]($style)"
-style             = "bg:black fg:green"
+style             = "fg:green"
 truncation_length = 0
 
 [git_branch]
 symbol = ""
 format = "[$symbol $branch ]($style)"
-style  = "bg:black fg:aqua"
+style  = "fg:aqua"
 
 [git_status]
 disabled          = false
-style             = "bg:black fg:red"
+style             = "fg:red"
 format            = '([$all_status$ahead_behind ]($style))'
 
-up_to_date        = '[✓](bg:black fg:orange)'
-untracked         = '[?\($count\)](bg:black fg:yellow)'
-stashed           = '[\$](bg:black fg:orange)'
-modified          = '[!\($count\)](bg:black fg:yellow)'
-renamed           = '[»\($count\)](bg:black fg:orange)'
-deleted           = '[✘\($count\)](bg:black fg:red)'
-staged            = '[++\($count\)](bg:black fg:yellow)'
+up_to_date        = '[✓](fg:orange)'
+untracked         = '[?\($count\)](fg:yellow)'
+stashed           = '[\$](fg:orange)'
+modified          = '[!\($count\)](fg:yellow)'
+renamed           = '[»\($count\)](fg:orange)'
+deleted           = '[✘\($count\)](fg:red)'
+staged            = '[++\($count\)](fg:yellow)'
 
-ahead             = '[⇡\(${count}\)](bg:black fg:aqua)'
-behind            = '[⇣\(${count}\)](bg:black fg:pink)'
-diverged          = '⇕[\[](bg:black fg:orange)[⇡\(${ahead_count}\)](bg:black fg:aqua)[⇣\(${behind_count}\)](bg:black fg:pink)[\]](bg:black fg:orange)'
+ahead             = '[⇡\(${count}\)](fg:aqua)'
+behind            = '[⇣\(${count}\)](fg:pink)'
+diverged          = '⇕[\[](fg:orange)[⇡\(${ahead_count}\)](fg:aqua)[⇣\(${behind_count}\)](fg:pink)[\]](fg:orange)'
 
 ignore_submodules = true
+
+[fill]
+symbol = " "
+
+[python]
+style = "fg:aqua"
+format = ' [$symbol$version(\($virtualenv\)) ]($style)'
+disabled = false
+symbol = ' '
+
+[conda]
+style = "fg:aqua"
+format = "[$symbol$environment ]($style)"
+disabled = false
+symbol = '🅒 '
