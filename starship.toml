@@ -1,5 +1,6 @@
 # Global prompt format
 format = """
+$hostname\
 $username\
 $directory\
 $git_branch\
@@ -20,6 +21,11 @@ pink   = "#a292a3"
 green  = "#87a987"
 aqua   = "#8ea4a2"
 orange = "#b98d7b"
+
+[hostname]
+ssh_symbol='󰢹'
+style = "fg:orange"
+format = "[$ssh_symbol $hostname ]($style)"
 
 [username]
 disabled     = false
