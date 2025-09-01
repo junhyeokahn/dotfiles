@@ -12,24 +12,23 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     fi
 
     # Install essential packages using Homebrew
-    brew install git cmake clang-format llvm curl gcc wget ripgrep pyright fzf
-
-    # Set up fzf
-    echo 'source <(fzf --zsh)' >> ~/.zshrc
+    brew install git cmake clang-format llvm curl gcc wget ripgrep pyright
 
 elif [[ "$(uname -s)" == "Linux" ]]; then
     # Update package list and upgrade installed packages
     sudo apt-get update && sudo apt-get -y upgrade
 
     # Install basic libraries
-    sudo apt-get -y install curl vim clang-format gcc wget unzip ripgrep xclip npm fzf
-
-    # Set up fzf
-    echo 'eval "$(fzf --bash)"' >> ~/.bashrc
+    sudo apt-get -y install curl vim clang-format gcc wget unzip ripgrep xclip npm
 
 else
     echo "OS not detected"
     exit 1
 fi
+
+# Install fzf
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
+rm -rf ~/.fzf
 
 echo 'Installation completed. Please restart your terminal or source your rc file to apply changes.'
