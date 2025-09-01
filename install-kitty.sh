@@ -53,6 +53,6 @@ done
 
 # Configure Starship
 echo "Configuring Starship..."
-cp startship.toml ~/.config/starship.toml
+cp starship.toml ~/.config/starship.toml
 
 echo "Installation completed. Please restart your terminal or source your rc file to apply changes."

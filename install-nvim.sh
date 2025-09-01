@@ -1,4 +1,4 @@
-VERSION="v0.11.1"
+VERSION="v0.11.4"
 LOCAL_DIR="${HOME}/.local"
 LOCAL_BIN_DIR="${LOCAL_DIR}/bin"
 
@@ -20,7 +20,7 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
 
     rm "${FILE}"
 elif [[ "$(uname -s)" == "Linux" ]]; then
-    NAME="nvim.appimage"
+    NAME="nvim-linux-x86_64.appimage"
 
     echo "Downloading Neovim AppImage for Linux..."
     curl -L "https://github.com/neovim/neovim/releases/download/${VERSION}/${NAME}" --output "${LOCAL_BIN_DIR}/nvim"
