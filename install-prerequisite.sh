@@ -25,7 +25,7 @@ elif [[ "$(uname -s)" == "Linux" ]]; then
     sudo apt-get -y install curl vim clang-format gcc wget unzip ripgrep xclip npm fzf
 
     # Set up fzf
-    echo 'eval "$(fzf --bash)"' >> ~/.basrc
+    echo 'eval "$(fzf --bash)"' >> ~/.bashrc
 
 else
     echo "OS not detected"
