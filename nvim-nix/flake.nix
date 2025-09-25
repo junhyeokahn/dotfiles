@@ -99,9 +99,8 @@
     packageDefinitions = {
       nvim = { pkgs, ... }: {
         settings = {
-          # These settings are the defaults provided by nixCats
-          wrapRc = true;
-          configDirName = "nixCats-nvim"; # Name of the config directory in ~/.config
+          wrapRc = false;
+          configDirName = "nvim-nix"; # Name of the config directory in ~/.config
           aliases = [ "vi" "vim" ]; # Shell aliases for this neovim
         };
 
