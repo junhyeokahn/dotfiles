@@ -32,8 +32,8 @@ else
     echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
 fi
 
-# Restart nix-daemon if running to pick up config changes
-if [ "$EUID" -eq 0 ] && systemctl is-active --quiet nix-daemon; then
+# Restart nix-daemon if running to pick up config changes (skip in Docker)
+if [ "$EUID" -eq 0 ] && command -v systemctl &> /dev/null && systemctl is-active --quiet nix-daemon; then
     systemctl restart nix-daemon
 fi
 
