@@ -39,4 +39,13 @@ fi
 
 # Install nvim
 echo "Install nvim-nix"
-nix profile add 'github:junhyeokahn/dotfiles?dir=nvim-nix'
+if [ "$EUID" -eq 0 ]; then
+    # Running as root - install to system profile for all users
+    echo "Installing nvim system-wide..."
+    nix --extra-experimental-features "nix-command flakes" profile add 'github:junhyeokahn/dotfiles?dir=nvim-nix' --profile /nix/var/nix/profiles/default
+    echo "nvim installed at /nix/var/nix/profiles/default/bin/nvim"
+else
+    # Running as regular user - install to user profile
+    nix --extra-experimental-features "nix-command flakes" profile add 'github:junhyeokahn/dotfiles?dir=nvim-nix'
+    echo "nvim installed for current user"
+fi
