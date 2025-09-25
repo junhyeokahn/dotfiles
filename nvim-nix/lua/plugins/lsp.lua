@@ -94,7 +94,7 @@ local servers = {
   },
 
   ruff = {
-    cmd = { "ruff", "server" }
+    cmd = { "ruff", "server" },
     filetypes = { "python" },
     init_options = {
       settings = {
