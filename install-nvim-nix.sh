@@ -20,11 +20,21 @@ if ! command -v nix &> /dev/null; then
     echo "Nix installed successfully."
 fi
 
-# Check if flakes are enabled
-if ! nix flake --help &> /dev/null; then
-    echo "Enabling flakes..."
+# Enable flakes (always configure to ensure it's set)
+echo "Configuring Nix experimental features..."
+if [ "$EUID" -eq 0 ]; then
+    # System-wide config for root/daemon mode
+    mkdir -p /etc/nix
+    echo "experimental-features = nix-command flakes" > /etc/nix/nix.conf
+else
+    # User config
     mkdir -p ~/.config/nix
-    echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+    echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
+fi
+
+# Restart nix-daemon if running to pick up config changes
+if [ "$EUID" -eq 0 ] && systemctl is-active --quiet nix-daemon; then
+    systemctl restart nix-daemon
 fi
 
 # Install nvim
