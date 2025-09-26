@@ -102,12 +102,8 @@ This allows you to test configuration changes without rebuilding the Nix package
 
 **Updating the Neovim package:**
 ```bash
-# First, check your profile to find the package identifier
-nix profile list --extra-experimental-features "nix-command flakes"
-
-# Then upgrade using the identifier shown (could be 0, 1, nvim, etc.)
-# Note: This uses the locked dependencies in flake.lock
-nix profile upgrade [identifier] --extra-experimental-features "nix-command flakes"
+# Tells Nix to re-fetch the input (GitHub repo) and resolve it again
+nix profile upgrade --refresh nvim-nix
 ```
 
 **Updating dependencies (plugins, LSPs, etc.):**
