@@ -29,13 +29,8 @@ fi
 # Install fzf
 if ! command -v fzf >/dev/null 2>&1; then
     echo "Installing fzf..."
-    pushd /tmp > /dev/null
-    git clone --depth 1 https://github.com/junegunn/fzf.git
-    cd fzf
-    ./install --all
-    cd ..
-    rm -rf fzf
-    popd > /dev/null
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install --all --no-update-rc
 fi
 
 echo 'Installation completed. Please restart your terminal or source your rc file to apply changes.'

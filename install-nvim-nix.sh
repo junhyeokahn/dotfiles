@@ -40,7 +40,7 @@ msg "Installing nvim from flake 'github:junhyeokahn/dotfiles?dir=nvim-nix'"
 
 PROFILE_ARGS=(--extra-experimental-features "nix-command flakes")
 
-nix "${PROFILE_ARGS[@]}" profile install --accept-flake-config \
+nix "${PROFILE_ARGS[@]}" profile add --accept-flake-config \
   'github:junhyeokahn/dotfiles?dir=nvim-nix'
 
 source_nix_env

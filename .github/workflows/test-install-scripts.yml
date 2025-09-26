@@ -32,6 +32,8 @@ jobs:
     - name: Run install script
       run: |
         chmod +x ./install-nvim-nix.sh
+        # Set GitHub token for Nix to avoid rate limiting
+        export NIX_CONFIG="access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}"
         ./install-nvim-nix.sh
 
     - name: Verify nvim installation
@@ -56,7 +58,7 @@ jobs:
         echo "Config files successfully downloaded"
         ls -la "$HOME/.config/nvim-nix/"
 
-    - name: Test nvim startup
+    - name: Test nvim startup and colorscheme
       run: |
         # Source nix environment
         if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
@@ -69,6 +71,16 @@ jobs:
         # Test that nvim can start and exit cleanly
         nvim --headless -c 'echo "Neovim started successfully"' -c 'qa!' || exit 1
         echo "Neovim startup test passed"
+
+        # Check colorscheme is kanagawa
+        COLORSCHEME=$(nvim --headless -c 'colorscheme' -c 'qa!' 2>&1 | tail -1)
+        echo "Current colorscheme: $COLORSCHEME"
+        if [[ "$COLORSCHEME" == *"kanagawa"* ]]; then
+          echo "✓ Colorscheme is correctly set to kanagawa"
+        else
+          echo "✗ Expected colorscheme 'kanagawa' but got: $COLORSCHEME"
+          exit 1
+        fi
 
   test-prerequisite-install:
     strategy:
@@ -145,23 +157,32 @@ jobs:
     - name: Run kitty install script
       run: |
         chmod +x ./install-kitty.sh
-        # Use sudo for font installation
-        echo "${{ secrets.GITHUB_TOKEN }}" | sudo -S bash ./install-kitty.sh || true
-        # Note: We use '|| true' because the script might fail on font installation
-        # but we still want to check if kitty itself was installed
+        # Run the install script - it may fail on font installation due to sudo requirements
+        ./install-kitty.sh || echo "Script failed with code $?, checking if kitty was at least partially installed"
 
     - name: Verify Kitty installation
       run: |
         if [[ "$(uname -s)" == "Darwin" ]]; then
           # Check if Kitty.app exists
-          [ -d ~/Applications/kitty.app ] || [ -d /Applications/kitty.app ] || (echo "Kitty.app not found" && exit 1)
-          echo "Kitty.app found"
+          if [ -d ~/Applications/kitty.app ]; then
+            KITTY_BIN=~/Applications/kitty.app/Contents/MacOS/kitty
+          elif [ -d /Applications/kitty.app ]; then
+            KITTY_BIN=/Applications/kitty.app/Contents/MacOS/kitty
+          else
+            echo "Kitty.app not found" && exit 1
+          fi
+          echo "Kitty.app found at $(dirname $(dirname $KITTY_BIN))"
+
+          # Test kitty executable
+          $KITTY_BIN --version || (echo "Failed to run kitty --version" && exit 1)
         else
           # Check if kitty binary exists
           [ -f ~/.local/kitty.app/bin/kitty ] || (echo "kitty binary not found" && exit 1)
-          ~/.local/kitty.app/bin/kitty --version
-          echo "Kitty installed successfully"
+
+          # Test kitty executable
+          ~/.local/kitty.app/bin/kitty --version || (echo "Failed to run kitty --version" && exit 1)
         fi
+        echo "✓ Kitty installed and working"
 
     - name: Verify Starship installation
       run: |
@@ -187,3 +208,36 @@ jobs:
         [ -f "$HOME/.config/starship.toml" ] || (echo "starship.toml not found" && exit 1)
         echo "All config files copied successfully"
         ls -la "$HOME/.config/kitty/"
+
+    - name: Verify font installation
+      run: |
+        FONT_FOUND=0
+        if [[ "$(uname -s)" == "Darwin" ]]; then
+          # On macOS, check if fonts are installed
+          echo "Looking for JetBrainsMono fonts..."
+          if ls /Library/Fonts/JetBrainsMono* 2>/dev/null || ls ~/Library/Fonts/JetBrainsMono* 2>/dev/null; then
+            FONT_FOUND=1
+            echo "✓ JetBrainsMono fonts found"
+          fi
+        else
+          # On Linux, check if fonts are installed
+          echo "Looking for JetBrainsMono fonts..."
+          if ls /usr/share/fonts/JetBrainsMono* 2>/dev/null; then
+            FONT_FOUND=1
+            echo "✓ JetBrainsMono fonts found in /usr/share/fonts"
+          fi
+
+          # Also check font cache
+          if [ $FONT_FOUND -eq 0 ]; then
+            echo "Checking font cache..."
+            if fc-list | grep -i jetbrains > /dev/null; then
+              FONT_FOUND=1
+              echo "✓ JetBrainsMono found in font cache"
+            fi
+          fi
+        fi
+
+        if [ $FONT_FOUND -eq 0 ]; then
+          echo "✗ JetBrainsMono fonts not installed"
+          exit 1
+        fi
