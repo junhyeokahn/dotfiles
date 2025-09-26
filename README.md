@@ -69,6 +69,7 @@ Installs Neovim using Nix package manager with a custom configuration.
 - **Plugin Management**: Uses Nix instead of lazy.nvim - all plugins are pre-installed and pinned to specific versions
 - **Dependencies**: All LSPs, formatters, and tools are bundled with the package (no need for Mason or manual installations)
 - **Configuration**: Uses `~/.config/nvim-nix/` instead of `~/.config/nvim/` to avoid conflicts
+- **Configuration Mode**: Can toggle between Nix store (reproducible) and live config (development) using `NIXCATS_UNWRAP_RC` environment variable
 - **Ideal for**: Docker containers, CI/CD environments, and systems where you want a fully reproducible setup
 
 **Benefits of Nix installation:**
@@ -78,12 +79,35 @@ Installs Neovim using Nix package manager with a custom configuration.
 - All LSPs and tools included in the package
 - Perfect for containerized environments where you can't easily install dependencies
 
+**Configuration Modes:**
+The nvim-nix installation supports two configuration modes controlled by the `NIXCATS_UNWRAP_RC` environment variable:
+
+1. **Nix Store Mode (default)**: Configuration is embedded in the Nix derivation for full reproducibility
+   ```bash
+   # Run with Nix store configuration (reproducible)
+   nvim
+   ```
+
+2. **Live Reload Mode**: Uses configuration files from `~/.config/nvim-nix/` for development
+   ```bash
+   # Run with live configuration files (for development/testing)
+   export NIXCATS_UNWRAP_RC=1
+   nvim
+
+   # Or as a one-time command
+   NIXCATS_UNWRAP_RC=1 nvim
+   ```
+
+This allows you to test configuration changes without rebuilding the Nix package, then freeze them into the Nix store once finalized.
+
 **Updating the Neovim package:**
 ```bash
-# Update to latest version (fetches latest flake.nix from GitHub)
+# First, check your profile to find the package identifier
+nix profile list --extra-experimental-features "nix-command flakes"
+
+# Then upgrade using the identifier shown (could be 0, 1, nvim, etc.)
 # Note: This uses the locked dependencies in flake.lock
-nix profile upgrade --extra-experimental-features "nix-command flakes" \
-  'github:junhyeokahn/dotfiles?dir=nvim-nix'
+nix profile upgrade [identifier] --extra-experimental-features "nix-command flakes"
 ```
 
 **Updating dependencies (plugins, LSPs, etc.):**

@@ -99,7 +99,7 @@
     packageDefinitions = {
       nvim = { pkgs, ... }: {
         settings = {
-          wrapRc = false;
+          wrapRc = "NIXCATS_UNWRAP_RC"; # Toggle via environment variable
           configDirName = "nvim-nix"; # Name of the config directory in ~/.config
           aliases = [ "vi" "vim" ]; # Shell aliases for this neovim
         };
