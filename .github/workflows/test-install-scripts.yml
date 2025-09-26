@@ -90,9 +90,8 @@ jobs:
 
     - name: Verify fzf installation
       run: |
-        # Source fzf if needed
-        [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-        [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+        # Add fzf to PATH (it's installed in ~/.fzf/bin)
+        export PATH="$HOME/.fzf/bin:$PATH"
 
         # Check fzf is available
         which fzf || (echo "fzf not found" && exit 1)
@@ -153,7 +152,7 @@ jobs:
 
     - name: Verify Kitty installation
       run: |
-        if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+        if [[ "$(uname -s)" == "Darwin" ]]; then
           # Check if Kitty.app exists
           [ -d ~/Applications/kitty.app ] || [ -d /Applications/kitty.app ] || (echo "Kitty.app not found" && exit 1)
           echo "Kitty.app found"
@@ -166,7 +165,7 @@ jobs:
 
     - name: Verify Starship installation
       run: |
-        if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+        if [[ "$(uname -s)" == "Darwin" ]]; then
           # Source brew environment
           eval "$(/opt/homebrew/bin/brew shellenv)" || eval "$(/usr/local/bin/brew shellenv)"
           which starship || (echo "starship not found" && exit 1)
