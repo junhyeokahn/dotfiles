@@ -65,15 +65,60 @@ Installs Neovim using Nix package manager with a custom configuration.
 ./install-nvim-nix.sh
 ```
 
+**Key differences from regular nvim:**
+- **Plugin Management**: Uses Nix instead of lazy.nvim - all plugins are pre-installed and pinned to specific versions
+- **Dependencies**: All LSPs, formatters, and tools are bundled with the package (no need for Mason or manual installations)
+- **Configuration**: Uses `~/.config/nvim-nix/` instead of `~/.config/nvim/` to avoid conflicts
+- **Ideal for**: Docker containers, CI/CD environments, and systems where you want a fully reproducible setup
+
 **Benefits of Nix installation:**
 - Reproducible builds across different machines
 - Isolated from system packages
 - Easy rollback and updates
 - All LSPs and tools included in the package
+- Perfect for containerized environments where you can't easily install dependencies
 
-### Alternative Neovim Installation (`install-nvim.sh`)
+**Updating the Neovim package:**
+```bash
+# Update to latest version (fetches latest flake.nix from GitHub)
+# Note: This uses the locked dependencies in flake.lock
+nix profile upgrade --extra-experimental-features "nix-command flakes" \
+  'github:junhyeokahn/dotfiles?dir=nvim-nix'
+```
 
-Traditional Neovim installation script (alternative to Nix version).
+**Updating dependencies (plugins, LSPs, etc.):**
+To update the actual plugin versions and dependencies, you need to update the `flake.lock` file in the repository:
+```bash
+# Clone the repository
+git clone https://github.com/junhyeokahn/dotfiles.git
+cd dotfiles/nvim-nix
+
+# Update all flake inputs (plugins, nixpkgs, etc.)
+nix flake update
+
+# Commit and push the updated flake.lock
+git add flake.lock
+git commit -m "Update nvim-nix dependencies"
+git push
+
+# Then on any machine, run the upgrade command above
+```
+
+**Rolling back changes:**
+```bash
+# If the update causes issues, rollback to previous version
+nix profile rollback
+```
+
+### Traditional Neovim Installation (`install-nvim.sh`)
+
+Traditional Neovim installation script that uses lazy.nvim for plugin management.
+
+**Key differences from nvim-nix:**
+- **Plugin Management**: Uses lazy.nvim - plugins are downloaded on first launch
+- **Dependencies**: Requires manual installation of LSPs and tools (uses Mason for LSP management)
+- **Configuration**: Uses standard `~/.config/nvim/` directory
+- **Ideal for**: Personal development machines where you want flexibility to modify plugins on the fly
 
 **Usage:**
 ```bash
