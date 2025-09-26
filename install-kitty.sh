@@ -24,7 +24,7 @@ elif [[ "$(uname -s)" == "Linux" ]]; then
     FONT_DIRECTORY="/usr/share/fonts"
 
     echo "Installing Starship prompt..."
-    curl -sS https://starship.rs/install.sh | sh
+    curl -sS https://starship.rs/install.sh | sh -s -- --yes
     echo 'eval "$(starship init bash)"' >> ~/.bashrc
 else
     echo "Unsupported operating system. Exiting."

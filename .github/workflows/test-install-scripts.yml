@@ -29,15 +29,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Run install script
+    - name: 📦 Run nvim-nix install script
       run: |
         chmod +x ./install-nvim-nix.sh
         # Set GitHub token for Nix to avoid rate limiting
         export NIX_CONFIG="access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}"
         ./install-nvim-nix.sh
 
-    - name: Verify nvim installation
+    - name: ✅ Verify nvim installation
       run: |
+        echo "═══════════════════════════════════════════════════════"
+        echo "  🔍 Verifying Neovim Installation"
+        echo "═══════════════════════════════════════════════════════"
         # Source nix environment
         if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
           . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
@@ -47,18 +50,28 @@ jobs:
         export PATH="/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/nix/profile/bin:$PATH"
 
         # Check nvim is available
+        echo "📍 Checking nvim location..."
         which nvim
-        nvim --version
+        echo ""
+        echo "📋 Neovim version:"
+        nvim --version | head -5
 
-    - name: Verify config files
+    - name: 📁 Verify config files
       run: |
+        echo "═══════════════════════════════════════════════════════"
+        echo "  🔍 Verifying Configuration Files"
+        echo "═══════════════════════════════════════════════════════"
         # Check that config files were downloaded
-        [ -f "$HOME/.config/nvim-nix/init.lua" ] || (echo "init.lua not found" && exit 1)
-        [ -d "$HOME/.config/nvim-nix/lua" ] || (echo "lua directory not found" && exit 1)
-        echo "Config files successfully downloaded"
+        echo "📂 Checking configuration directory: ~/.config/nvim-nix/"
+        [ -f "$HOME/.config/nvim-nix/init.lua" ] || (echo "❌ init.lua not found" && exit 1)
+        echo "  ✅ init.lua found"
+        [ -d "$HOME/.config/nvim-nix/lua" ] || (echo "❌ lua directory not found" && exit 1)
+        echo "  ✅ lua/ directory found"
+        echo ""
+        echo "📋 Configuration files:"
         ls -la "$HOME/.config/nvim-nix/"
 
-    - name: Test nvim startup and colorscheme
+    - name: 🚀 Test nvim startup and colorscheme
       run: |
         # Source nix environment
         if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
@@ -68,19 +81,28 @@ jobs:
         fi
         export PATH="/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/nix/profile/bin:$PATH"
 
-        # Test that nvim can start and exit cleanly
-        nvim --headless -c 'echo "Neovim started successfully"' -c 'qa!' || exit 1
-        echo "Neovim startup test passed"
+        echo "═══════════════════════════════════════════════════════"
+        echo "  🧪 Testing Neovim Startup"
+        echo "═══════════════════════════════════════════════════════"
 
-        # Check colorscheme is kanagawa
+        # Test that nvim can start and exit cleanly
+        echo "🔄 Starting Neovim in headless mode..."
+        nvim --headless -c 'echo "Neovim started successfully"' -c 'qa!' || exit 1
+        echo "✅ Neovim startup test passed"
+
+        echo ""
+        echo "🎨 Checking colorscheme..."
         COLORSCHEME=$(nvim --headless -c 'colorscheme' -c 'qa!' 2>&1 | tail -1)
-        echo "Current colorscheme: $COLORSCHEME"
         if [[ "$COLORSCHEME" == *"kanagawa"* ]]; then
-          echo "✓ Colorscheme is correctly set to kanagawa"
+          echo "  ✅ Colorscheme: kanagawa"
         else
-          echo "✗ Expected colorscheme 'kanagawa' but got: $COLORSCHEME"
+          echo "  ❌ Expected 'kanagawa' but got: $COLORSCHEME"
           exit 1
         fi
+        echo ""
+        echo "═══════════════════════════════════════════════════════"
+        echo "  ✅ All Neovim tests passed!"
+        echo "═══════════════════════════════════════════════════════"
 
   test-prerequisite-install:
     strategy:
@@ -95,36 +117,51 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Run prerequisite install script
+    - name: 🔧 Run prerequisite install script
       run: |
         chmod +x ./install-prerequisite.sh
         ./install-prerequisite.sh
 
-    - name: Verify fzf installation
+    - name: 🔍 Verify fzf installation
       run: |
+        echo "═══════════════════════════════════════════════════════"
+        echo "  🎯 Verifying FZF Installation"
+        echo "═══════════════════════════════════════════════════════"
         # Add fzf to PATH (it's installed in ~/.fzf/bin)
         export PATH="$HOME/.fzf/bin:$PATH"
 
         # Check fzf is available
-        which fzf || (echo "fzf not found" && exit 1)
+        echo "📍 Checking fzf location..."
+        which fzf || (echo "❌ fzf not found" && exit 1)
+        echo "✅ FZF found at: $(which fzf)"
+        echo ""
+        echo "📋 FZF version:"
         fzf --version
-        echo "fzf installed successfully"
+        echo "✅ FZF installed successfully"
 
-    - name: Verify other tools installation
+    - name: 🔧 Verify other tools installation
       run: |
-        # Check git
-        which git || (echo "git not found" && exit 1)
-        git --version
+        echo "═══════════════════════════════════════════════════════"
+        echo "  📦 Verifying Prerequisite Tools"
+        echo "═══════════════════════════════════════════════════════"
+        echo "📦 Checking Git..."
+        which git || (echo "❌ git not found" && exit 1)
+        echo "  ✅ $(git --version)"
 
-        # Check ripgrep
-        which rg || (echo "ripgrep not found" && exit 1)
-        rg --version
+        echo ""
+        echo "🔍 Checking Ripgrep..."
+        which rg || (echo "❌ ripgrep not found" && exit 1)
+        echo "  ✅ $(rg --version | head -1)"
 
-        # Check curl
-        which curl || (echo "curl not found" && exit 1)
-        curl --version
+        echo ""
+        echo "🌐 Checking Curl..."
+        which curl || (echo "❌ curl not found" && exit 1)
+        echo "  ✅ $(curl --version | head -1)"
 
-        echo "All prerequisite tools installed successfully"
+        echo ""
+        echo "═══════════════════════════════════════════════════════"
+        echo "  ✅ All prerequisite tools verified!"
+        echo "═══════════════════════════════════════════════════════"
 
   test-kitty-install:
     strategy:
@@ -139,13 +176,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Install Homebrew (macOS)
+    - name: 🍺 Install Homebrew (macOS)
       if: matrix.os == 'macos-latest'
       run: |
         # Homebrew is pre-installed on GitHub Actions macOS runners
         brew --version
 
-    - name: Create required config files for testing
+    - name: 📝 Create required config files for testing
       run: |
         # Create dummy config files that the script expects to copy
         touch kitty.conf
@@ -154,14 +191,17 @@ jobs:
         touch current-theme.conf
         touch starship.toml
 
-    - name: Run kitty install script
+    - name: 🐱 Run kitty install script
       run: |
         chmod +x ./install-kitty.sh
         # Run the install script - it may fail on font installation due to sudo requirements
         ./install-kitty.sh || echo "Script failed with code $?, checking if kitty was at least partially installed"
 
-    - name: Verify Kitty installation
+    - name: ✅ Verify Kitty installation
       run: |
+        echo "══════════════════════════════════════════════════════"
+        echo "  🐱 Verifying Kitty Terminal"
+        echo "══════════════════════════════════════════════════════"
         if [[ "$(uname -s)" == "Darwin" ]]; then
           # Check if Kitty.app exists
           if [ -d ~/Applications/kitty.app ]; then
@@ -171,73 +211,94 @@ jobs:
           else
             echo "Kitty.app not found" && exit 1
           fi
-          echo "Kitty.app found at $(dirname $(dirname $KITTY_BIN))"
+          echo "✅ Kitty.app found at $(dirname $(dirname $KITTY_BIN))"
 
           # Test kitty executable
-          $KITTY_BIN --version || (echo "Failed to run kitty --version" && exit 1)
+          echo "📋 Version: $($KITTY_BIN --version 2>&1 | head -1)" || (echo "❌ Failed to run kitty --version" && exit 1)
         else
           # Check if kitty binary exists
           [ -f ~/.local/kitty.app/bin/kitty ] || (echo "kitty binary not found" && exit 1)
 
           # Test kitty executable
-          ~/.local/kitty.app/bin/kitty --version || (echo "Failed to run kitty --version" && exit 1)
+          echo "📋 Version: $(~/.local/kitty.app/bin/kitty --version 2>&1 | head -1)" || (echo "❌ Failed to run kitty --version" && exit 1)
         fi
-        echo "✓ Kitty installed and working"
+        echo "✅ Kitty installed and working"
 
-    - name: Verify Starship installation
+    - name: 🌟 Verify Starship installation
       run: |
+        echo "══════════════════════════════════════════════════════"
+        echo "  🌟 Verifying Starship Prompt"
+        echo "══════════════════════════════════════════════════════"
         if [[ "$(uname -s)" == "Darwin" ]]; then
           # Source brew environment
           eval "$(/opt/homebrew/bin/brew shellenv)" || eval "$(/usr/local/bin/brew shellenv)"
-          which starship || (echo "starship not found" && exit 1)
-          starship --version
+          which starship || (echo "❌ starship not found" && exit 1)
+          echo "📋 Version: $(starship --version 2>&1 | head -1)"
         else
           # Check if starship was installed
-          which starship || [ -f /usr/local/bin/starship ] || (echo "starship not found" && exit 1)
-          (which starship && starship --version) || /usr/local/bin/starship --version
+          which starship || [ -f /usr/local/bin/starship ] || (echo "❌ starship not found" && exit 1)
+          echo "📋 Version: $((which starship && starship --version) || /usr/local/bin/starship --version 2>&1 | head -1)"
         fi
-        echo "Starship installed successfully"
+        echo "✅ Starship installed successfully"
 
-    - name: Verify Kitty config files
+    - name: 📁 Verify Kitty config files
       run: |
-        # Check that config files were copied
-        [ -f "$HOME/.config/kitty/kitty.conf" ] || (echo "kitty.conf not found" && exit 1)
-        [ -f "$HOME/.config/kitty/zoom_toggle.py" ] || (echo "zoom_toggle.py not found" && exit 1)
-        [ -f "$HOME/.config/kitty/custom-hints.py" ] || (echo "custom-hints.py not found" && exit 1)
-        [ -f "$HOME/.config/kitty/current-theme.conf" ] || (echo "current-theme.conf not found" && exit 1)
-        [ -f "$HOME/.config/starship.toml" ] || (echo "starship.toml not found" && exit 1)
-        echo "All config files copied successfully"
+        echo "══════════════════════════════════════════════════════"
+        echo "  📂 Verifying Configuration Files"
+        echo "══════════════════════════════════════════════════════"
+        echo "📂 Checking Kitty config directory..."
+        [ -f "$HOME/.config/kitty/kitty.conf" ] || (echo "❌ kitty.conf not found" && exit 1)
+        echo "  ✅ kitty.conf"
+        [ -f "$HOME/.config/kitty/zoom_toggle.py" ] || (echo "❌ zoom_toggle.py not found" && exit 1)
+        echo "  ✅ zoom_toggle.py"
+        [ -f "$HOME/.config/kitty/custom-hints.py" ] || (echo "❌ custom-hints.py not found" && exit 1)
+        echo "  ✅ custom-hints.py"
+        [ -f "$HOME/.config/kitty/current-theme.conf" ] || (echo "❌ current-theme.conf not found" && exit 1)
+        echo "  ✅ current-theme.conf"
+        echo ""
+        echo "🌟 Checking Starship config..."
+        [ -f "$HOME/.config/starship.toml" ] || (echo "❌ starship.toml not found" && exit 1)
+        echo "  ✅ starship.toml"
+        echo ""
+        echo "📋 Directory contents:"
         ls -la "$HOME/.config/kitty/"
 
-    - name: Verify font installation
+    - name: 🅰️ Verify font installation
       run: |
+        echo "══════════════════════════════════════════════════════"
+        echo "  🅰️ Verifying Font Installation"
+        echo "══════════════════════════════════════════════════════"
         FONT_FOUND=0
         if [[ "$(uname -s)" == "Darwin" ]]; then
           # On macOS, check if fonts are installed
-          echo "Looking for JetBrainsMono fonts..."
+          echo "🔍 Looking for JetBrainsMono fonts..."
           if ls /Library/Fonts/JetBrainsMono* 2>/dev/null || ls ~/Library/Fonts/JetBrainsMono* 2>/dev/null; then
             FONT_FOUND=1
-            echo "✓ JetBrainsMono fonts found"
+            echo "  ✅ JetBrainsMono fonts found"
           fi
         else
           # On Linux, check if fonts are installed
-          echo "Looking for JetBrainsMono fonts..."
+          echo "🔍 Looking for JetBrainsMono fonts..."
           if ls /usr/share/fonts/JetBrainsMono* 2>/dev/null; then
             FONT_FOUND=1
-            echo "✓ JetBrainsMono fonts found in /usr/share/fonts"
+            echo "  ✅ JetBrainsMono fonts found in /usr/share/fonts"
           fi
 
           # Also check font cache
           if [ $FONT_FOUND -eq 0 ]; then
-            echo "Checking font cache..."
+            echo "🗄️ Checking font cache..."
             if fc-list | grep -i jetbrains > /dev/null; then
               FONT_FOUND=1
-              echo "✓ JetBrainsMono found in font cache"
+              echo "  ✅ JetBrainsMono found in font cache"
             fi
           fi
         fi
 
         if [ $FONT_FOUND -eq 0 ]; then
-          echo "✗ JetBrainsMono fonts not installed"
+          echo "  ❌ JetBrainsMono fonts not installed"
           exit 1
         fi
+        echo ""
+        echo "══════════════════════════════════════════════════════"
+        echo "  ✅ All Kitty tests passed!"
+        echo "══════════════════════════════════════════════════════"

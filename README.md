@@ -83,8 +83,8 @@ Traditional Neovim installation script (alternative to Nix version).
 ## System Requirements
 
 ### Supported Operating Systems
-- macOS (Intel and Apple Silicon)
-- Ubuntu/Debian-based Linux distributions
+- macOS (Apple Silicon)
+- Ubuntu
 
 ### Required Software
 - Git
@@ -100,11 +100,11 @@ dotfiles/
 ├── install-nvim-nix.sh        # Neovim Nix installer
 ├── install-nvim.sh            # Traditional Neovim installer
 ├── nvim-nix/                  # Neovim Nix configuration
-│   ├── flake.nix             # Nix flake definition
-│   ├── init.lua              # Neovim init configuration
-│   └── lua/                  # Lua configuration modules
+│   ├── flake.nix              # Nix flake definition
+│   ├── init.lua               # Neovim init configuration
+│   └── lua/                   # Lua configuration modules
 ├── kitty.conf                 # Kitty terminal configuration
-├── starship.toml             # Starship prompt configuration
+├── starship.toml              # Starship prompt configuration
 └── .github/workflows/         # CI/CD workflows
 ```
 
@@ -121,60 +121,3 @@ dotfiles/
 ### Starship Configuration
 - **Location**: `~/.config/starship.toml`
 - Custom prompt with git information, directory context, and more
-
-## Troubleshooting
-
-### Nix Installation Issues
-
-If you encounter rate limiting errors when installing with Nix:
-```bash
-export NIX_CONFIG="access-tokens = github.com=YOUR_GITHUB_TOKEN"
-./install-nvim-nix.sh
-```
-
-### Kitty Font Issues
-
-If fonts aren't displaying correctly:
-1. Restart your terminal
-2. On Linux, you may need to run: `fc-cache -fv`
-3. Check font installation: `fc-list | grep JetBrains`
-
-### FZF Not Found
-
-If fzf isn't available after installation:
-```bash
-# Add to your shell configuration
-export PATH="$HOME/.fzf/bin:$PATH"
-source ~/.fzf/bash  # for bash
-source ~/.fzf/zsh   # for zsh
-```
-
-### Permission Denied
-
-If you get permission errors:
-```bash
-chmod +x install-*.sh
-```
-
-## CI/CD
-
-The repository includes GitHub Actions workflows that test all installation scripts on:
-- macOS (latest, ARM64)
-- Ubuntu (latest)
-
-Tests run automatically on:
-- Push to main branch
-- Pull requests
-- Manual workflow dispatch
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Ensure tests pass
-5. Submit a pull request
-
-## License
-
-This repository contains personal configuration files. Feel free to use and modify for your own purposes.
