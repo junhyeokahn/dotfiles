@@ -1,0 +1,190 @@
+name: Test install scripts
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'install-*.sh'
+      - 'nvim-nix/**'
+      - '.github/workflows/test-install-scripts.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'install-*.sh'
+      - 'nvim-nix/**'
+      - '.github/workflows/test-install-scripts.yml'
+  workflow_dispatch:
+
+jobs:
+  test-nvim-install:
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Run install script
+      run: |
+        chmod +x ./install-nvim-nix.sh
+        ./install-nvim-nix.sh
+
+    - name: Verify nvim installation
+      run: |
+        # Source nix environment
+        if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+          . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        elif [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+          . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+        fi
+        export PATH="/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/nix/profile/bin:$PATH"
+
+        # Check nvim is available
+        which nvim
+        nvim --version
+
+    - name: Verify config files
+      run: |
+        # Check that config files were downloaded
+        [ -f "$HOME/.config/nvim-nix/init.lua" ] || (echo "init.lua not found" && exit 1)
+        [ -d "$HOME/.config/nvim-nix/lua" ] || (echo "lua directory not found" && exit 1)
+        echo "Config files successfully downloaded"
+        ls -la "$HOME/.config/nvim-nix/"
+
+    - name: Test nvim startup
+      run: |
+        # Source nix environment
+        if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+          . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        elif [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+          . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+        fi
+        export PATH="/nix/var/nix/profiles/default/bin:$HOME/.nix-profile/bin:/nix/profile/bin:$PATH"
+
+        # Test that nvim can start and exit cleanly
+        nvim --headless -c 'echo "Neovim started successfully"' -c 'qa!' || exit 1
+        echo "Neovim startup test passed"
+
+  test-prerequisite-install:
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Run prerequisite install script
+      run: |
+        chmod +x ./install-prerequisite.sh
+        ./install-prerequisite.sh
+
+    - name: Verify fzf installation
+      run: |
+        # Source fzf if needed
+        [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+        [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+        # Check fzf is available
+        which fzf || (echo "fzf not found" && exit 1)
+        fzf --version
+        echo "fzf installed successfully"
+
+    - name: Verify other tools installation
+      run: |
+        # Check git
+        which git || (echo "git not found" && exit 1)
+        git --version
+
+        # Check ripgrep
+        which rg || (echo "ripgrep not found" && exit 1)
+        rg --version
+
+        # Check curl
+        which curl || (echo "curl not found" && exit 1)
+        curl --version
+
+        echo "All prerequisite tools installed successfully"
+
+  test-kitty-install:
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Homebrew (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        # Homebrew is pre-installed on GitHub Actions macOS runners
+        brew --version
+
+    - name: Create required config files for testing
+      run: |
+        # Create dummy config files that the script expects to copy
+        touch kitty.conf
+        touch zoom_toggle.py
+        touch custom-hints.py
+        touch current-theme.conf
+        touch starship.toml
+
+    - name: Run kitty install script
+      run: |
+        chmod +x ./install-kitty.sh
+        # Use sudo for font installation
+        echo "${{ secrets.GITHUB_TOKEN }}" | sudo -S bash ./install-kitty.sh || true
+        # Note: We use '|| true' because the script might fail on font installation
+        # but we still want to check if kitty itself was installed
+
+    - name: Verify Kitty installation
+      run: |
+        if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+          # Check if Kitty.app exists
+          [ -d ~/Applications/kitty.app ] || [ -d /Applications/kitty.app ] || (echo "Kitty.app not found" && exit 1)
+          echo "Kitty.app found"
+        else
+          # Check if kitty binary exists
+          [ -f ~/.local/kitty.app/bin/kitty ] || (echo "kitty binary not found" && exit 1)
+          ~/.local/kitty.app/bin/kitty --version
+          echo "Kitty installed successfully"
+        fi
+
+    - name: Verify Starship installation
+      run: |
+        if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+          # Source brew environment
+          eval "$(/opt/homebrew/bin/brew shellenv)" || eval "$(/usr/local/bin/brew shellenv)"
+          which starship || (echo "starship not found" && exit 1)
+          starship --version
+        else
+          # Check if starship was installed
+          which starship || [ -f /usr/local/bin/starship ] || (echo "starship not found" && exit 1)
+          (which starship && starship --version) || /usr/local/bin/starship --version
+        fi
+        echo "Starship installed successfully"
+
+    - name: Verify Kitty config files
+      run: |
+        # Check that config files were copied
+        [ -f "$HOME/.config/kitty/kitty.conf" ] || (echo "kitty.conf not found" && exit 1)
+        [ -f "$HOME/.config/kitty/zoom_toggle.py" ] || (echo "zoom_toggle.py not found" && exit 1)
+        [ -f "$HOME/.config/kitty/custom-hints.py" ] || (echo "custom-hints.py not found" && exit 1)
+        [ -f "$HOME/.config/kitty/current-theme.conf" ] || (echo "current-theme.conf not found" && exit 1)
+        [ -f "$HOME/.config/starship.toml" ] || (echo "starship.toml not found" && exit 1)
+        echo "All config files copied successfully"
+        ls -la "$HOME/.config/kitty/"
