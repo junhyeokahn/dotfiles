@@ -26,36 +26,11 @@ else
     exit 1
 fi
 
-# Install Rust if not present
-if ! command -v cargo >/dev/null 2>&1; then
-    echo "Installing Rust..."
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-    source "$HOME/.cargo/env"
-fi
-
-# Install lspdock from source
-if ! command -v lspdock >/dev/null 2>&1; then
-    echo "Installing lspdock..."
-    pushd /tmp > /dev/null
-    git clone https://github.com/richardhapb/lspdock.git
-    cd lspdock
-    cargo build --release
-    sudo cp target/release/lspdock /usr/local/bin/
-    cd ..
-    rm -rf lspdock
-    popd > /dev/null
-fi
-
 # Install fzf
 if ! command -v fzf >/dev/null 2>&1; then
     echo "Installing fzf..."
-    pushd /tmp > /dev/null
-    git clone --depth 1 https://github.com/junegunn/fzf.git
-    cd fzf
-    ./install --all
-    cd ..
-    rm -rf fzf
-    popd > /dev/null
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    ~/.fzf/install --all --no-update-rc
 fi
 
 echo 'Installation completed. Please restart your terminal or source your rc file to apply changes.'
