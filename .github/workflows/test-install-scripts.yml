@@ -39,7 +39,7 @@ jobs:
 
   test-nvim-install:
     needs: changes
-    if: needs.changes.outputs.nvim == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.changes.outputs.nvim == 'true' || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     strategy:
       matrix:
         os:
@@ -129,7 +129,7 @@ jobs:
 
   test-prerequisite-install:
     needs: changes
-    if: needs.changes.outputs.prerequisite == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.changes.outputs.prerequisite == 'true' || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     strategy:
       matrix:
         os:
@@ -190,7 +190,7 @@ jobs:
 
   test-kitty-install:
     needs: changes
-    if: needs.changes.outputs.kitty == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.changes.outputs.kitty == 'true' || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     strategy:
       matrix:
         os:
