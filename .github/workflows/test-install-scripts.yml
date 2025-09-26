@@ -3,20 +3,43 @@ name: Test install scripts
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'install-*.sh'
-      - 'nvim-nix/**'
-      - '.github/workflows/test-install-scripts.yml'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'install-*.sh'
-      - 'nvim-nix/**'
-      - '.github/workflows/test-install-scripts.yml'
   workflow_dispatch:
 
 jobs:
+  # Detect which files changed to determine which tests to run
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      nvim: ${{ steps.filter.outputs.nvim }}
+      prerequisite: ${{ steps.filter.outputs.prerequisite }}
+      kitty: ${{ steps.filter.outputs.kitty }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          nvim:
+            - 'install-nvim-nix.sh'
+            - 'nvim-nix/**'
+            - '.github/workflows/test-install-scripts.yml'
+          prerequisite:
+            - 'install-prerequisite.sh'
+            - '.github/workflows/test-install-scripts.yml'
+          kitty:
+            - 'install-kitty.sh'
+            - 'kitty.conf'
+            - 'starship.toml'
+            - 'zoom_toggle.py'
+            - 'custom-hints.py'
+            - 'current-theme.conf'
+            - '.github/workflows/test-install-scripts.yml'
+
   test-nvim-install:
+    needs: changes
+    if: needs.changes.outputs.nvim == 'true' || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     strategy:
       matrix:
         os:
@@ -105,6 +128,8 @@ jobs:
         echo "═══════════════════════════════════════════════════════"
 
   test-prerequisite-install:
+    needs: changes
+    if: needs.changes.outputs.prerequisite == 'true' || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     strategy:
       matrix:
         os:
@@ -164,6 +189,8 @@ jobs:
         echo "═══════════════════════════════════════════════════════"
 
   test-kitty-install:
+    needs: changes
+    if: needs.changes.outputs.kitty == 'true' || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     strategy:
       matrix:
         os:
@@ -302,3 +329,25 @@ jobs:
         echo "══════════════════════════════════════════════════════"
         echo "  ✅ All Kitty tests passed!"
         echo "══════════════════════════════════════════════════════"
+
+  # Summary job that branch protection can depend on
+  # This job always runs and succeeds if all relevant tests pass
+  tests-complete:
+    name: All Tests Complete
+    runs-on: ubuntu-latest
+    needs: [changes, test-nvim-install, test-prerequisite-install, test-kitty-install]
+    if: always()
+    steps:
+    - name: Check test results
+      run: |
+        echo "Checking test results..."
+
+        # Check if any required test failed
+        if [[ "${{ needs.test-nvim-install.result }}" == "failure" ]] || \
+           [[ "${{ needs.test-prerequisite-install.result }}" == "failure" ]] || \
+           [[ "${{ needs.test-kitty-install.result }}" == "failure" ]]; then
+          echo "❌ One or more tests failed"
+          exit 1
+        fi
+
+        echo "✅ All required tests passed or were skipped appropriately"
