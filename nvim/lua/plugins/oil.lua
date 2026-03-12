@@ -1,3 +1,8 @@
+return {
+  {
+    "stevearc/oil.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
       CustomOilBar = function()
         local path = vim.fn.expand "%"
         path = path:gsub("oil://", "")
@@ -31,3 +36,6 @@
 
       -- Open parent directory in floating window
       vim.keymap.set("n", "<leader>-", require("oil").toggle_float)
+    end,
+  },
+}
