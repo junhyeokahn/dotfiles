@@ -25,7 +25,10 @@ install_linux_deps() {
         git \
         ripgrep \
         fd-find \
-        bat
+        bat \
+        npm
+
+    npm install -g tree-sitter-cli
 
     fix_linux_cli_names
     install_fzf
@@ -33,7 +36,7 @@ install_linux_deps() {
 
 install_macos_deps() {
     echo "Installing Neovim dependencies for macOS..."
-    brew_install curl git fd ripgrep bat
+    brew_install curl git fd ripgrep bat tree-sitter-cli
     install_fzf
 }
 

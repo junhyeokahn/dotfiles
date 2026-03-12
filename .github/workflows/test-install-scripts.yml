@@ -80,8 +80,8 @@ jobs:
           [ -f "$HOME/.config/nvim/init.lua" ] || (echo "init.lua not found" && exit 1)
           echo "init.lua found"
 
-          [ -f "$HOME/.config/nvim/lazy-lock.json" ] || (echo "lazy-lock.json not found" && exit 1)
-          echo "lazy-lock.json found"
+          [ -f "$HOME/.config/nvim/nvim-pack-lock.json" ] || (echo "nvim-pack-lock.json not found" && exit 1)
+          echo "nvim-pack-lock.json found"
 
           [ -f "$HOME/.config/nvim/stylua.toml" ] || (echo "stylua.toml not found" && exit 1)
           echo "stylua.toml found"
