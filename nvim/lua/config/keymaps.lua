@@ -4,7 +4,7 @@ vim.g.maplocalleader = ","
 local map = vim.keymap.set
 
 map("n", "<Esc>", "<cmd>nohlsearch<CR>")
-map("n", "e", "<cmd>edit %:h<CR>", { desc = "[E]dit the directory of the current file" })
+map("n", "<leader>e", ":e %:h", { desc = "[E]dit the directory of the current file" })
 
 vim.api.nvim_set_keymap(
   "n",

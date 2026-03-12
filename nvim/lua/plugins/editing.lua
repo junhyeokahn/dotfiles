@@ -45,6 +45,6 @@ end
 require("neoscroll").setup {}
 
 vim.cmd [[
-  nmap <C-Down> <Plug>(VM-Add-Cursor-Down)
-  nmap <C-Up> <Plug>(VM-Add-Cursor-Up)
+  nmap <M-C-j> <Plug>(VM-Add-Cursor-Down)
+  nmap <M-C-k> <Plug>(VM-Add-Cursor-Up)
 ]]

@@ -31,7 +31,7 @@ do
     { "<leader>sk", fzf.keymaps, "Keymaps" },
     { "<leader>sf", fzf.files, "Files" },
     { "<leader>sw", fzf.grep_cword, "Current word" },
-    { "<leader>sg", fzf.live_grep_glob, "Live grep (--glob)" },
+    { "<leader>sg", fzf.live_grep, "Live grep (--glob)" },
     { "<leader>sb", fzf.buffers, "Buffers" },
     { "<leader>s/", fzf.lines, "Buffer lines" },
     { "<leader>st", fzf.treesitter, "Treesitter symbol" },

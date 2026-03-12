@@ -21,3 +21,4 @@ vim.opt.splitright = true
 vim.opt.timeoutlen = 300
 vim.opt.undofile = false
 vim.opt.updatetime = 250
+vim.opt.winborder = "rounded"

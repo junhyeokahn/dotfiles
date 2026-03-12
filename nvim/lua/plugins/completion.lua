@@ -36,9 +36,11 @@ cmp.setup {
   },
   window = {
     completion = cmp.config.window.bordered {
+      border = "rounded",
       winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
     },
     documentation = cmp.config.window.bordered {
+      border = "rounded",
       winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
     },
   },
