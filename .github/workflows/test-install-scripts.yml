@@ -36,6 +36,11 @@ jobs:
               - 'install/lib/common.sh'
               - 'starship/**'
               - '.github/workflows/test-install-scripts.yml'
+            zk:
+              - 'install/zk.sh'
+              - 'install/lib/common.sh'
+              - 'zk/**'
+              - '.github/workflows/test-install-scripts.yml'
 
   test-nvim-install:
     needs: changes
@@ -271,6 +276,110 @@ jobs:
           grep -F 'eval "$(starship init zsh)"' "$HOME/.zshrc" >/dev/null || (echo "zsh init line missing" && exit 1)
           echo "Shell init lines found"
 
+  test-zk-install:
+    needs: changes
+    if: needs.changes.outputs.zk == 'true' || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run zk install script
+        shell: bash
+        run: |
+          chmod +x ./install/zk.sh
+          ./install/zk.sh
+
+      - name: Verify zk installation
+        shell: bash
+        run: |
+          echo "══════════════════════════════════════════════════════"
+          echo "  Verifying zk Installation"
+          echo "══════════════════════════════════════════════════════"
+
+          export PATH="$HOME/.local/bin:$PATH"
+
+          which zk || (echo "zk not found" && exit 1)
+          echo
+          zk --version | head -1
+
+      - name: Verify zk notebook bootstrap
+        shell: bash
+        run: |
+          echo "══════════════════════════════════════════════════════"
+          echo "  Verifying zk Notebook Bootstrap"
+          echo "══════════════════════════════════════════════════════"
+
+          NOTEBOOK_DIR="$HOME/notebook"
+
+          [ -d "$NOTEBOOK_DIR" ] || (echo "notebook directory not found" && exit 1)
+          echo "notebook directory found"
+
+          [ -d "$NOTEBOOK_DIR/.zk" ] || (echo ".zk directory not found" && exit 1)
+          echo ".zk directory found"
+
+          [ -f "$NOTEBOOK_DIR/.zk/config.toml" ] || (echo "config.toml not found" && exit 1)
+          echo "config.toml found"
+
+          [ -d "$NOTEBOOK_DIR/.zk/templates" ] || (echo "templates directory not found" && exit 1)
+          echo "templates directory found"
+
+          find "$NOTEBOOK_DIR/.zk/templates" -type f | grep . >/dev/null || (echo "no templates found" && exit 1)
+          echo "template files found"
+
+          [ -d "$NOTEBOOK_DIR/meeting" ] || (echo "meeting directory not found" && exit 1)
+          echo "meeting/ directory found"
+
+          [ -d "$NOTEBOOK_DIR/daily" ] || (echo "daily directory not found" && exit 1)
+          echo "daily/ directory found"
+
+          echo
+          ls -la "$NOTEBOOK_DIR"
+          echo
+          ls -la "$NOTEBOOK_DIR/.zk"
+          echo
+          find "$NOTEBOOK_DIR/.zk/templates" -maxdepth 1 -type f -print
+
+      - name: Verify zk shell init lines
+        shell: bash
+        run: |
+          grep -F 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.bashrc" >/dev/null || (echo "bash PATH line missing" && exit 1)
+          grep -F 'export ZK_NOTEBOOK_DIR="$HOME/notebook"' "$HOME/.bashrc" >/dev/null || (echo "bash ZK_NOTEBOOK_DIR line missing" && exit 1)
+          grep -F 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.zshrc" >/dev/null || (echo "zsh PATH line missing" && exit 1)
+          grep -F 'export ZK_NOTEBOOK_DIR="$HOME/notebook"' "$HOME/.zshrc" >/dev/null || (echo "zsh ZK_NOTEBOOK_DIR line missing" && exit 1)
+          echo "Shell init lines found"
+
+      - name: Smoke test zk commands
+        shell: bash
+        run: |
+          echo "══════════════════════════════════════════════════════"
+          echo "  Smoke Testing zk"
+          echo "══════════════════════════════════════════════════════"
+
+          export PATH="$HOME/.local/bin:$PATH"
+          export ZK_NOTEBOOK_DIR="$HOME/notebook"
+
+          cd "$ZK_NOTEBOOK_DIR"
+
+          zk list --limit 1 >/dev/null
+
+          before_count="$(find "$ZK_NOTEBOOK_DIR" -maxdepth 1 -type f -name '*.md' | wc -l | tr -d ' ')"
+          zk new --title "CI Smoke Test" --no-input >/dev/null
+          after_count="$(find "$ZK_NOTEBOOK_DIR" -maxdepth 1 -type f -name '*.md' | wc -l | tr -d ' ')"
+
+          if [ "$after_count" -le "$before_count" ]; then
+            echo "zk smoke test note was not created"
+            exit 1
+          fi
+
+          echo "zk smoke test passed"
+
   tests-complete:
     name: All Tests Complete
     runs-on: ubuntu-latest
@@ -279,6 +388,7 @@ jobs:
       - test-nvim-install
       - test-kitty-install
       - test-starship-install
+      - test-zk-install
     if: always()
     steps:
       - name: Check test results

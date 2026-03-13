@@ -8,4 +8,5 @@ Personal development environment configuration files and installation scripts.
 - `git clone https://github.com/junhyeokahn/dotfiles.git && cd dotfiles`
 - `bash install/starship.sh`
 - `bash install/kitty.sh`
+- `bash install/zk.sh`
 - `bash install/nvim.sh`

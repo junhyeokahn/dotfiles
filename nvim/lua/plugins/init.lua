@@ -26,6 +26,7 @@ vim.pack.add({
   { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
   { src = "https://github.com/karb94/neoscroll.nvim" },
   { src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
+  { src = "https://github.com/zk-org/zk-nvim" },
 }, {
   load = true,
   confirm = false,
