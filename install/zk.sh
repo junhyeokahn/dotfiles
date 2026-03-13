@@ -79,7 +79,7 @@ bootstrap_zk_notebook() {
 
     if [[ ! -d "${ZK_NOTEBOOK_META_DIR}" ]]; then
         echo "Initializing zk notebook at ${ZK_NOTEBOOK_DIR}..."
-        "${ZK_BIN}" init "${ZK_NOTEBOOK_DIR}"
+        "${ZK_BIN}" init "${ZK_NOTEBOOK_DIR}" --no-input
 
         echo "Installing default zk config..."
         copy_file "${ZK_SOURCE_CONFIG}" "${ZK_NOTEBOOK_CONFIG}"
