@@ -26,9 +26,10 @@ install_linux_deps() {
         ripgrep \
         fd-find \
         bat \
-        npm
 
-    npm install -g tree-sitter-cli
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    source "$HOME/.cargo/env"
+    cargo install tree-sitter-cli
 
     fix_linux_cli_names
     install_fzf
