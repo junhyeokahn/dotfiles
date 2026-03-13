@@ -370,16 +370,11 @@ jobs:
 
           zk list --limit 1 >/dev/null
 
-          before_count="$(find "$ZK_NOTEBOOK_DIR" -maxdepth 1 -type f -name '*.md' | wc -l | tr -d ' ')"
-          zk new --title "CI Smoke Test" --no-input >/dev/null
-          after_count="$(find "$ZK_NOTEBOOK_DIR" -maxdepth 1 -type f -name '*.md' | wc -l | tr -d ' ')"
-
-          if [ "$after_count" -le "$before_count" ]; then
-            echo "zk smoke test note was not created"
-            exit 1
-          fi
+          created_note="$(zk new --title "CI Smoke Test" --no-input --print-path)"
+          [ -f "$created_note" ] || (echo "zk smoke test note was not created" && exit 1)
 
           echo "zk smoke test passed"
+          echo "Created note: $created_note"
 
   tests-complete:
     name: All Tests Complete
