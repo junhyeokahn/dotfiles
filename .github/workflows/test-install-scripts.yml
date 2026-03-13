@@ -14,6 +14,7 @@ jobs:
       nvim: ${{ steps.filter.outputs.nvim }}
       kitty: ${{ steps.filter.outputs.kitty }}
       starship: ${{ steps.filter.outputs.starship }}
+      zk: ${{ steps.filter.outputs.zk }}
     steps:
       - uses: actions/checkout@v4
 
@@ -397,7 +398,8 @@ jobs:
 
           if [[ "${{ needs.test-nvim-install.result }}" == "failure" ]] || \
              [[ "${{ needs.test-kitty-install.result }}" == "failure" ]] || \
-             [[ "${{ needs.test-starship-install.result }}" == "failure" ]]; then
+             [[ "${{ needs.test-starship-install.result }}" == "failure" ]] || \
+             [[ "${{ needs.test-zk-install.result }}" == "failure" ]]; then
             echo "One or more tests failed"
             exit 1
           fi
