@@ -68,10 +68,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
       require("fzf-lua").lsp_document_diagnostics()
     end, opt "Open diagnostics")
 
-    keymap({ "n", "i" }, "<C-k>", function()
-      vim.lsp.buf.signature_help { border = "single" }
-    end, opt "Signature help")
-
     keymap("n", "K", function()
       vim.lsp.buf.hover {
         border = "single",
