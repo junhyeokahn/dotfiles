@@ -105,6 +105,7 @@ do
     columns = { "icon" },
     keymaps = {
       ["<C-s>"] = false,
+      ["<C-l>"] = false,
       ["<C-h>"] = false,
       ["<C-t>"] = false,
       ["<C-p>"] = false,
