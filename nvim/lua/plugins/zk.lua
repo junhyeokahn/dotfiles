@@ -90,29 +90,19 @@ local function new_meeting_note()
 end
 
 local function open_or_create_daily_note()
-  api.list(notebook_dir, {
-    select = { "path" },
-    hrefs = { "daily" },
-    created = "today",
-    limit = 1,
-    sort = { "created-" },
-  }, function(err, notes)
-    if err then
-      notify("Failed to list daily notes: " .. tostring(err), vim.log.levels.ERROR)
-      return
-    end
+  local today = os.date("%Y-%m-%d")
+  local daily_path = notebook_dir .. "/daily/" .. today .. ".md"
 
-    if notes and not vim.tbl_isempty(notes) then
-      edit_abs_path(notebook_dir .. "/" .. notes[1].path)
-      return
-    end
+  if vim.fn.filereadable(daily_path) == 1 then
+    edit_abs_path(daily_path)
+    return
+  end
 
-    zk.new({
-      group = "daily",
-      dir = "daily",
-      date = "today",
-    })
-  end)
+  zk.new({
+    group = "daily",
+    dir = "daily",
+    date = "today",
+  })
 end
 
 local map = vim.keymap.set
