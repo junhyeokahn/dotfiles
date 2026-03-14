@@ -7,8 +7,10 @@ REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
 source "${SCRIPT_DIR}/lib/common.sh"
 
 OS="$(uname -s)"
+ARCH="$(uname -m)"
 
 ZK_VERSION="v0.15.2"
+
 ZK_INSTALL_DIR="$HOME/.local/bin"
 ZK_BIN="${ZK_INSTALL_DIR}/zk"
 
@@ -27,12 +29,12 @@ cleanup_tmpdir() {
 
 install_linux_deps() {
     echo "Installing zk dependencies for Ubuntu..."
-    apt_install git make golang-go
+    apt_install curl tar
 }
 
 install_macos_deps() {
     echo "Installing zk dependencies for macOS..."
-    brew_install git go make
+    brew_install curl gnu-tar
 }
 
 setup_shell_init() {
@@ -45,23 +47,66 @@ setup_shell_init() {
     append_once 'export ZK_NOTEBOOK_DIR="$HOME/notebook"' "$HOME/.bashrc"
 }
 
-install_zk_from_source() {
-    echo "Installing zk ${ZK_VERSION} from source..."
+get_zk_platform() {
+    case "${OS}" in
+        Linux) echo "linux" ;;
+        Darwin) echo "macos" ;;
+        *)
+            echo "Unsupported operating system: ${OS}" >&2
+            exit 1
+            ;;
+    esac
+}
 
-    need_cmd git
-    need_cmd make
-    need_cmd go
+get_zk_arch() {
+    case "${ARCH}" in
+        x86_64|amd64) echo "amd64" ;;
+        arm64|aarch64)
+            if [[ "${OS}" == "Darwin" ]]; then
+                echo "arm64"
+            else
+                echo "arm64"
+            fi
+            ;;
+        i386|i686) echo "i386" ;;
+        *)
+            echo "Unsupported architecture: ${ARCH}" >&2
+            exit 1
+            ;;
+    esac
+}
+
+install_zk_from_release() {
+    echo "Installing zk ${ZK_VERSION} from prebuilt release..."
+
+    need_cmd curl
+    need_cmd tar
     need_cmd install
     need_cmd mktemp
+
+    local platform arch asset_name download_url extracted_bin
+    platform="$(get_zk_platform)"
+    arch="$(get_zk_arch)"
+
+    asset_name="zk-${ZK_VERSION}-${platform}-${arch}.tar.gz"
+    download_url="https://github.com/zk-org/zk/releases/download/${ZK_VERSION}/${asset_name}"
 
     TMPDIR_TO_CLEANUP="$(mktemp -d)"
     trap cleanup_tmpdir EXIT
 
-    git clone --branch "${ZK_VERSION}" --depth 1 https://github.com/zk-org/zk.git "${TMPDIR_TO_CLEANUP}/zk"
-    cd "${TMPDIR_TO_CLEANUP}/zk"
-    make build
+    echo "Downloading ${asset_name}..."
+    curl -fL "${download_url}" -o "${TMPDIR_TO_CLEANUP}/${asset_name}"
 
-    install -m 0755 ./zk "${ZK_BIN}"
+    echo "Extracting ${asset_name}..."
+    tar -xzf "${TMPDIR_TO_CLEANUP}/${asset_name}" -C "${TMPDIR_TO_CLEANUP}"
+
+    extracted_bin="$(find "${TMPDIR_TO_CLEANUP}" -type f -name zk | head -n 1 || true)"
+    if [[ -z "${extracted_bin}" ]]; then
+        echo "Error: could not find zk binary after extracting ${asset_name}"
+        exit 1
+    fi
+
+    install -m 0755 "${extracted_bin}" "${ZK_BIN}"
 }
 
 bootstrap_zk_notebook() {
@@ -121,7 +166,7 @@ main() {
     esac
 
     setup_shell_init
-    install_zk_from_source
+    install_zk_from_release
     bootstrap_zk_notebook
 
     echo
