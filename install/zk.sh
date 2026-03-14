@@ -10,7 +10,6 @@ OS="$(uname -s)"
 ARCH="$(uname -m)"
 
 ZK_VERSION="v0.15.2"
-ZK_VERSION_NO_V="${ZK_VERSION#v}"
 
 ZK_INSTALL_DIR="$HOME/.local/bin"
 ZK_BIN="${ZK_INSTALL_DIR}/zk"
@@ -89,7 +88,7 @@ install_zk_from_release() {
     platform="$(get_zk_platform)"
     arch="$(get_zk_arch)"
 
-    asset_name="zk-${ZK_VERSION_NO_V}-${platform}-${arch}.tar.gz"
+    asset_name="zk-${ZK_VERSION}-${platform}-${arch}.tar.gz"
     download_url="https://github.com/zk-org/zk/releases/download/${ZK_VERSION}/${asset_name}"
 
     TMPDIR_TO_CLEANUP="$(mktemp -d)"
