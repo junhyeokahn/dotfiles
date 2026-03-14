@@ -10,6 +10,8 @@ OS="$(uname -s)"
 ARCH="$(uname -m)"
 
 ZK_VERSION="v0.15.2"
+ZK_VERSION_NO_V="${ZK_VERSION#v}"
+
 ZK_INSTALL_DIR="$HOME/.local/bin"
 ZK_BIN="${ZK_INSTALL_DIR}/zk"
 
@@ -46,32 +48,33 @@ setup_shell_init() {
     append_once 'export ZK_NOTEBOOK_DIR="$HOME/notebook"' "$HOME/.bashrc"
 }
 
-get_zk_asset_name() {
-    local os="$1"
-    local arch="$2"
-
-    case "${os}" in
-        Darwin) os="macOS" ;;
-        Linux) os="Linux" ;;
+get_zk_platform() {
+    case "${OS}" in
+        Linux) echo "linux" ;;
+        Darwin) echo "macos" ;;
         *)
-            echo "Unsupported operating system: ${os}" >&2
+            echo "Unsupported operating system: ${OS}" >&2
             exit 1
             ;;
     esac
+}
 
-    case "${arch}" in
-        x86_64|amd64) arch="x86_64" ;;
-        arm64|aarch64) arch="arm64" ;;
+get_zk_arch() {
+    case "${ARCH}" in
+        x86_64|amd64) echo "amd64" ;;
+        arm64|aarch64)
+            if [[ "${OS}" == "Darwin" ]]; then
+                echo "arm64"
+            else
+                echo "arm64"
+            fi
+            ;;
+        i386|i686) echo "i386" ;;
         *)
-            echo "Unsupported architecture: ${arch}" >&2
+            echo "Unsupported architecture: ${ARCH}" >&2
             exit 1
             ;;
     esac
-
-    # Expected release asset pattern:
-    # zk-${OS}-${ARCH}.tar.gz
-    # e.g. zk-Linux-x86_64.tar.gz
-    printf 'zk-%s-%s.tar.gz' "${os}" "${arch}"
 }
 
 install_zk_from_release() {
@@ -82,10 +85,11 @@ install_zk_from_release() {
     need_cmd install
     need_cmd mktemp
 
-    local asset_name
-    local download_url
+    local platform arch asset_name download_url extracted_bin
+    platform="$(get_zk_platform)"
+    arch="$(get_zk_arch)"
 
-    asset_name="$(get_zk_asset_name "${OS}" "${ARCH}")"
+    asset_name="zk-${ZK_VERSION_NO_V}-${platform}-${arch}.tar.gz"
     download_url="https://github.com/zk-org/zk/releases/download/${ZK_VERSION}/${asset_name}"
 
     TMPDIR_TO_CLEANUP="$(mktemp -d)"
@@ -97,19 +101,13 @@ install_zk_from_release() {
     echo "Extracting ${asset_name}..."
     tar -xzf "${TMPDIR_TO_CLEANUP}/${asset_name}" -C "${TMPDIR_TO_CLEANUP}"
 
-    if [[ -f "${TMPDIR_TO_CLEANUP}/zk" ]]; then
-        install -m 0755 "${TMPDIR_TO_CLEANUP}/zk" "${ZK_BIN}"
-    else
-        local extracted_bin
-        extracted_bin="$(find "${TMPDIR_TO_CLEANUP}" -type f -name zk | head -n 1 || true)"
-
-        if [[ -z "${extracted_bin}" ]]; then
-            echo "Error: could not find zk binary after extracting release archive."
-            exit 1
-        fi
-
-        install -m 0755 "${extracted_bin}" "${ZK_BIN}"
+    extracted_bin="$(find "${TMPDIR_TO_CLEANUP}" -type f -name zk | head -n 1 || true)"
+    if [[ -z "${extracted_bin}" ]]; then
+        echo "Error: could not find zk binary after extracting ${asset_name}"
+        exit 1
     fi
+
+    install -m 0755 "${extracted_bin}" "${ZK_BIN}"
 }
 
 bootstrap_zk_notebook() {
