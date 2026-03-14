@@ -40,6 +40,7 @@ require "plugins.syntax"
 require "plugins.markdown"
 require "plugins.completion"
 require "plugins.lsp"
+require "plugins.zk"
 
 vim.api.nvim_create_user_command("PackUpdate", function()
   vim.pack.update()
