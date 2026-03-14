@@ -25,11 +25,13 @@ install_linux_deps() {
         git \
         ripgrep \
         fd-find \
-        bat
+        bat \
+        clang \
+        libclang-dev
 
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
     . "$HOME/.cargo/env"
-    cargo install tree-sitter-cli
+    cargo install --locked tree-sitter-cli
 
     fix_linux_cli_names
     install_fzf
@@ -37,7 +39,14 @@ install_linux_deps() {
 
 install_macos_deps() {
     echo "Installing Neovim dependencies for macOS..."
-    brew_install curl git fd ripgrep bat tree-sitter-cli
+    brew_install curl \
+        git \
+        fd \
+        ripgrep \
+        bat \
+        llvm \
+        tree-sitter-cli
+
     install_fzf
 }
 
