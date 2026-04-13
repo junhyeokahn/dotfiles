@@ -1,3 +1,5 @@
 nvim-macos-arm64
 nvim.appimage
 .DS_Store
+docs/superpowers
+.worktrees
