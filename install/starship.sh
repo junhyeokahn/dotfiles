@@ -27,7 +27,7 @@ install_starship() {
         brew_install starship
     else
         need_cmd curl
-        curl -fsSL https://starship.rs/install.sh | sh -s -- -y
+        download_and_run https://starship.rs/install.sh -y
     fi
 }
 

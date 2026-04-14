@@ -86,7 +86,11 @@ install_linux_deps() {
         clang \
         libclang-dev
 
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    local rustup_tmp
+    rustup_tmp="$(mktemp)"
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o "${rustup_tmp}"
+    sh "${rustup_tmp}" -y
+    rm -f "${rustup_tmp}"
     . "$HOME/.cargo/env"
     cargo install --locked tree-sitter-cli
 

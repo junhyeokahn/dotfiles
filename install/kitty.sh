@@ -66,9 +66,9 @@ install_kitty() {
     echo "Installing Kitty..."
 
     if [[ "${OS}" == "Darwin" ]]; then
-        curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+        download_and_run https://sw.kovidgoyal.net/kitty/installer.sh
     else
-        curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
+        download_and_run https://sw.kovidgoyal.net/kitty/installer.sh launch=n
         install_kitty_linux_desktop
     fi
 }
@@ -92,7 +92,14 @@ install_nerd_fonts() {
     need_cmd curl
     need_cmd unzip
 
-    local font_version="3.3.0"
+    local font_version
+    font_version="$(curl -fsSL https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest \
+        | sed -n 's/.*"tag_name": *"v\([^"]*\)".*/\1/p' | head -n 1)"
+    if [[ -z "${font_version}" ]]; then
+        echo "Error: failed to resolve latest Nerd Fonts release"
+        exit 1
+    fi
+    echo "Latest Nerd Fonts version: ${font_version}"
 
     echo "Installing Nerd Fonts..."
     for font in JetBrainsMono NerdFontsSymbolsOnly; do
