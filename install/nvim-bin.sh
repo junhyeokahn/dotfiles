@@ -45,6 +45,40 @@ brew_install() {
     brew install "$@"
 }
 
+sha256_cmd() {
+    if command -v sha256sum >/dev/null 2>&1; then
+        echo "sha256sum"
+    elif command -v shasum >/dev/null 2>&1; then
+        echo "shasum -a 256"
+    else
+        echo "Error: need sha256sum or shasum to verify checksums." >&2
+        exit 1
+    fi
+}
+
+# verify_sha256_from_manifest <file> <manifest_url> <asset_name>
+# Downloads a checksum manifest and verifies <file> against the entry for <asset_name>.
+verify_sha256_from_manifest() {
+    local file="$1" manifest_url="$2" asset_name="$3"
+    local manifest expected actual
+    manifest="$(mktemp)"
+    curl -fsSL "${manifest_url}" -o "${manifest}"
+    expected="$(awk -v name="${asset_name}" '$2 == name || $2 == "*"name {print $1; exit}' "${manifest}")"
+    rm -f "${manifest}"
+    if [[ -z "${expected}" ]]; then
+        echo "Error: no checksum entry for ${asset_name} in ${manifest_url}" >&2
+        exit 1
+    fi
+    actual="$($(sha256_cmd) "${file}" | awk '{print $1}')"
+    if [[ "${actual}" != "${expected}" ]]; then
+        echo "Error: checksum mismatch for ${file}" >&2
+        echo "  expected: ${expected}" >&2
+        echo "  actual:   ${actual}" >&2
+        exit 1
+    fi
+    echo "Verified sha256 for ${asset_name}"
+}
+
 ensure_local_bin_path() {
     local path_line='export PATH="$HOME/.local/bin:$PATH"'
     append_once "${path_line}" "$HOME/.bashrc"
@@ -86,7 +120,11 @@ install_linux_deps() {
         clang \
         libclang-dev
 
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    local rustup_tmp
+    rustup_tmp="$(mktemp)"
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o "${rustup_tmp}"
+    sh "${rustup_tmp}" -y
+    rm -f "${rustup_tmp}"
     . "$HOME/.cargo/env"
     cargo install --locked tree-sitter-cli
 
@@ -128,6 +166,10 @@ install_nvim_macos() {
     echo "Downloading Neovim ${NVIM_CHANNEL} for macOS (${ARCH})..."
     curl -fL "${url}" -o "/tmp/${file}"
 
+    verify_sha256_from_manifest "/tmp/${file}" \
+        "https://github.com/neovim/neovim/releases/download/${NVIM_CHANNEL}/shasum.txt" \
+        "${file}"
+
     rm -rf "${LOCAL_DIR:?}/${name}" "${LOCAL_BIN_DIR}/nvim"
     tar xzf "/tmp/${file}" -C "${LOCAL_DIR}"
     ln -sf "${LOCAL_DIR}/${name}/bin/nvim" "${LOCAL_BIN_DIR}/nvim"
@@ -153,6 +195,11 @@ install_nvim_linux() {
 
     echo "Downloading Neovim ${NVIM_CHANNEL} AppImage for Linux (${ARCH})..."
     curl -fL "${url}" -o "${LOCAL_BIN_DIR}/nvim"
+
+    verify_sha256_from_manifest "${LOCAL_BIN_DIR}/nvim" \
+        "https://github.com/neovim/neovim/releases/download/${NVIM_CHANNEL}/shasum.txt" \
+        "${name}"
+
     chmod u+x "${LOCAL_BIN_DIR}/nvim"
 }
 

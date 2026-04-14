@@ -59,6 +59,12 @@ ensure_local_bin_path() {
 
 install_fzf() {
     local local_bin_dir="${HOME}/.local/bin"
+    local fzf_target="$HOME/.fzf/bin/fzf"
+    local fzf_link="${local_bin_dir}/fzf"
+
+    if [[ -L "${fzf_link}" && "$(readlink "${fzf_link}")" == "${fzf_target}" && -x "${fzf_target}" ]]; then
+        return
+    fi
 
     if command -v fzf >/dev/null 2>&1; then
         return
@@ -73,5 +79,45 @@ install_fzf() {
 
     "$HOME/.fzf/install" --bin --no-update-rc
     mkdir -p "${local_bin_dir}"
-    ln -sf "$HOME/.fzf/bin/fzf" "${local_bin_dir}/fzf"
+    ln -sf "${fzf_target}" "${fzf_link}"
+}
+
+# sha256_cmd prints the command to use for sha256 verification.
+sha256_cmd() {
+    if command -v sha256sum >/dev/null 2>&1; then
+        echo "sha256sum"
+    elif command -v shasum >/dev/null 2>&1; then
+        echo "shasum -a 256"
+    else
+        echo "Error: need sha256sum or shasum to verify checksums." >&2
+        exit 1
+    fi
+}
+
+# verify_sha256 <file> <expected_hex>
+verify_sha256() {
+    local file="$1"
+    local expected="$2"
+    local actual
+    actual="$($(sha256_cmd) "${file}" | awk '{print $1}')"
+    if [[ "${actual}" != "${expected}" ]]; then
+        echo "Error: checksum mismatch for ${file}" >&2
+        echo "  expected: ${expected}" >&2
+        echo "  actual:   ${actual}" >&2
+        exit 1
+    fi
+}
+
+# download_and_run <url> [args...] — downloads to a temp file, runs it, cleans up.
+download_and_run() {
+    local url="$1"
+    shift
+    need_cmd curl
+    local tmp rc=0
+    tmp="$(mktemp)"
+    curl -fsSL "${url}" -o "${tmp}"
+    chmod +x "${tmp}"
+    sh "${tmp}" "$@" || rc=$?
+    rm -f "${tmp}"
+    return "${rc}"
 }

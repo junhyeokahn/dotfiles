@@ -17,7 +17,12 @@ install_nvim_config() {
     }
 
     echo "Installing Neovim config..."
-    rm -rf "${CONFIG_DIR}"
+    if [[ -d "${CONFIG_DIR}" ]]; then
+        local backup_dir
+        backup_dir="${CONFIG_DIR}.bak.$(date +%Y%m%d%H%M%S)"
+        echo "Backing up existing config to ${backup_dir}"
+        mv "${CONFIG_DIR}" "${backup_dir}"
+    fi
     mkdir -p "$(dirname "${CONFIG_DIR}")"
     cp -R "${NVIM_SOURCE_DIR}" "${CONFIG_DIR}"
 }
