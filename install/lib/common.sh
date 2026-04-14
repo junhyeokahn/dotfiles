@@ -75,16 +75,3 @@ install_fzf() {
     mkdir -p "${local_bin_dir}"
     ln -sf "$HOME/.fzf/bin/fzf" "${local_bin_dir}/fzf"
 }
-
-fix_linux_cli_names() {
-    local local_bin_dir="${HOME}/.local/bin"
-    mkdir -p "${local_bin_dir}"
-
-    if ! command -v fd >/dev/null 2>&1 && command -v fdfind >/dev/null 2>&1; then
-        ln -sf "$(command -v fdfind)" "${local_bin_dir}/fd"
-    fi
-
-    if ! command -v bat >/dev/null 2>&1 && command -v batcat >/dev/null 2>&1; then
-        ln -sf "$(command -v batcat)" "${local_bin_dir}/bat"
-    fi
-}
