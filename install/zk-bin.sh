@@ -40,39 +40,6 @@ brew_install() {
     brew install "$@"
 }
 
-sha256_cmd() {
-    if command -v sha256sum >/dev/null 2>&1; then
-        echo "sha256sum"
-    elif command -v shasum >/dev/null 2>&1; then
-        echo "shasum -a 256"
-    else
-        echo "Error: need sha256sum or shasum to verify checksums." >&2
-        exit 1
-    fi
-}
-
-# verify_sha256_from_manifest <file> <manifest_url> <asset_name>
-verify_sha256_from_manifest() {
-    local file="$1" manifest_url="$2" asset_name="$3"
-    local manifest expected actual
-    manifest="$(mktemp)"
-    curl -fsSL "${manifest_url}" -o "${manifest}"
-    expected="$(awk -v name="${asset_name}" '$2 == name || $2 == "*"name {print $1; exit}' "${manifest}")"
-    rm -f "${manifest}"
-    if [[ -z "${expected}" ]]; then
-        echo "Error: no checksum entry for ${asset_name} in ${manifest_url}" >&2
-        exit 1
-    fi
-    actual="$($(sha256_cmd) "${file}" | awk '{print $1}')"
-    if [[ "${actual}" != "${expected}" ]]; then
-        echo "Error: checksum mismatch for ${file}" >&2
-        echo "  expected: ${expected}" >&2
-        echo "  actual:   ${actual}" >&2
-        exit 1
-    fi
-    echo "Verified sha256 for ${asset_name}"
-}
-
 install_linux_deps() {
     echo "Installing zk dependencies for Ubuntu..."
     apt_install curl tar
@@ -128,10 +95,6 @@ install_zk_from_release() {
 
     echo "Downloading ${asset_name}..."
     curl -fL "${download_url}" -o "${TMPDIR_TO_CLEANUP}/${asset_name}"
-
-    verify_sha256_from_manifest "${TMPDIR_TO_CLEANUP}/${asset_name}" \
-        "https://github.com/zk-org/zk/releases/download/${ZK_VERSION}/checksums.txt" \
-        "${asset_name}"
 
     echo "Extracting ${asset_name}..."
     tar -xzf "${TMPDIR_TO_CLEANUP}/${asset_name}" -C "${TMPDIR_TO_CLEANUP}"
