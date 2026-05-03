@@ -77,7 +77,7 @@ install_fzf() {
         git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
     fi
 
-    "$HOME/.fzf/install" --bin --no-update-rc
+    "$HOME/.fzf/install" --all
     mkdir -p "${local_bin_dir}"
     ln -sf "${fzf_target}" "${fzf_link}"
 }

@@ -17,7 +17,7 @@ vim.diagnostic.config {
     },
   },
   update_in_insert = true,
-  underline = true,
+  underline = false,
   severity_sort = true,
   float = {
     focusable = false,
@@ -110,9 +110,6 @@ local servers = {
     filetypes = { "python" },
     cmd = { "basedpyright-langserver", "--stdio" },
     settings = {
-      python = {
-        venvPath = vim.fn.expand "~" .. "/venv",
-      },
       basedpyright = {
         disableOrganizeImports = true,
         analysis = {

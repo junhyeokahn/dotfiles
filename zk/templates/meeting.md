@@ -1,5 +1,5 @@
 ---
-title: Meeting with {{extra.attendees}}
+title: Meeting with {{extra.attendees}} - {{format-date now}}
 date: {{format-date now}}
 tags: ["meeting","{{extra.attendees}}"]
 ---
