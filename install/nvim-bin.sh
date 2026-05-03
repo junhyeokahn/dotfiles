@@ -60,7 +60,7 @@ install_fzf() {
     if [[ ! -d "$HOME/.fzf" ]]; then
         git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
     fi
-    "$HOME/.fzf/install" --bin --no-update-rc
+    "$HOME/.fzf/install" --all
     mkdir -p "${LOCAL_BIN_DIR}"
     ln -sf "$HOME/.fzf/bin/fzf" "${LOCAL_BIN_DIR}/fzf"
 }

@@ -93,8 +93,8 @@ install_nerd_fonts() {
     need_cmd unzip
 
     local font_version
-    font_version="$(curl -fsSL https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest \
-        | sed -n 's/.*"tag_name": *"v\([^"]*\)".*/\1/p' | head -n 1)"
+    font_version="$(curl -fsSL -o /dev/null -w '%{url_effective}' \
+        https://github.com/ryanoasis/nerd-fonts/releases/latest | sed 's|.*/tag/v||')"
     if [[ -z "${font_version}" ]]; then
         echo "Error: failed to resolve latest Nerd Fonts release"
         exit 1
