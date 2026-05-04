@@ -3,3 +3,5 @@ nvim.appimage
 .DS_Store
 docs/superpowers
 .worktrees
+result
+result-*

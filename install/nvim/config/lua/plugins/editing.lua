@@ -2,7 +2,6 @@ local map = vim.keymap.set
 
 require("guess-indent").setup {}
 require("Comment").setup {}
-require("mason").setup {}
 
 require("conform").setup {
   notify_on_error = false,
