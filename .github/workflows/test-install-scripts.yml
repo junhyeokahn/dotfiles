@@ -65,68 +65,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run nvim install script
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+        with:
+          determinate: true
+
+      - name: Install nvim from flake
         shell: bash
-        run: |
-          chmod +x ./install/nvim.sh
-          ./install/nvim.sh
+        run: nix profile install ./install/nvim#nvim
 
       - name: Verify nvim installation
         shell: bash
         run: |
-          echo "═══════════════════════════════════════════════════════"
-          echo "  Verifying Neovim Installation"
-          echo "═══════════════════════════════════════════════════════"
-
-          export PATH="$HOME/.local/bin:$PATH"
-
-          which nvim || (echo "nvim not found" && exit 1)
-          echo
+          export PATH="$HOME/.nix-profile/bin:$PATH"
+          which nvim
           nvim --version | head -5
-
-      - name: Verify nvim config files
-        shell: bash
-        run: |
-          echo "═══════════════════════════════════════════════════════"
-          echo "  Verifying Configuration Files"
-          echo "═══════════════════════════════════════════════════════"
-
-          [ -f "$HOME/.config/nvim/init.lua" ] || (echo "init.lua not found" && exit 1)
-          echo "init.lua found"
-
-          [ -f "$HOME/.config/nvim/nvim-pack-lock.json" ] || (echo "nvim-pack-lock.json not found" && exit 1)
-          echo "nvim-pack-lock.json found"
-
-          [ -f "$HOME/.config/nvim/stylua.toml" ] || (echo "stylua.toml not found" && exit 1)
-          echo "stylua.toml found"
-
-          [ -d "$HOME/.config/nvim/after" ] || (echo "after directory not found" && exit 1)
-          echo "after/ directory found"
-
-          [ -d "$HOME/.config/nvim/lua" ] || (echo "lua directory not found" && exit 1)
-          echo "lua/ directory found"
-
-          [ -d "$HOME/.config/nvim/lua/plugins" ] || (echo "lua/plugins directory not found" && exit 1)
-          echo "lua/plugins/ directory found"
-
-          echo
-          ls -la "$HOME/.config/nvim/"
-          echo
-          ls -la "$HOME/.config/nvim/lua/"
-          echo
-          ls -la "$HOME/.config/nvim/lua/plugins/"
 
       - name: Test nvim startup
         shell: bash
         run: |
-          echo "═══════════════════════════════════════════════════════"
-          echo "  Testing Neovim Startup"
-          echo "═══════════════════════════════════════════════════════"
+          export PATH="$HOME/.nix-profile/bin:$PATH"
+          nvim --headless "+qa"
 
-          export PATH="$HOME/.local/bin:$PATH"
-
-          nvim --headless "+qa" || exit 1
-          echo "Neovim startup test passed"
+      - name: Verify plugins and bundled tools load
+        shell: bash
+        run: |
+          export PATH="$HOME/.nix-profile/bin:$PATH"
+          nvim --headless -c "luafile .github/scripts/verify-nvim.lua" +qa
 
   test-kitty-install:
     needs: changes
