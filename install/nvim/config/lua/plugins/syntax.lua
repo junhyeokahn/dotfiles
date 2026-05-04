@@ -3,31 +3,11 @@ require("todo-comments").setup({
 })
 
 local ts = require("nvim-treesitter")
-local install_dir = vim.fn.stdpath("data") .. "/site"
-local parsers = {
-  "bash",
-  "cpp",
-  "diff",
-  "html",
-  "lua",
-  "luadoc",
-  "markdown",
-  "markdown_inline",
-  "python",
-  "vim",
-  "vimdoc",
-  "yaml",
-}
 
-ts.setup({
-  install_dir = install_dir,
-})
-
--- Install/update asynchronously. On first run, reopen Neovim after install finishes.
-ts.install(parsers)
+ts.setup({})
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = parsers,
+  pattern = "*",
   callback = function(args)
     local ft = vim.bo[args.buf].filetype
 
