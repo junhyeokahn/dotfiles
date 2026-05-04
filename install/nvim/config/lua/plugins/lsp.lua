@@ -109,6 +109,7 @@ local servers = {
     name = "basedpyright",
     filetypes = { "python" },
     cmd = { "basedpyright-langserver", "--stdio" },
+    root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git", vim.uv.cwd() },
     settings = {
       basedpyright = {
         disableOrganizeImports = true,
