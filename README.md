@@ -19,11 +19,11 @@ The `zk` binary is **not** bundled in the flake. The zk-nvim plugin still loads,
 ### nvim workflows
 - Install on a new machine (with dotfiles cloned):
 ```bash
-nix profile install ~/dotfiles/install/nvim#nvim
+nix profile add ~/dotfiles/install/nvim#nvim
 ```
 - Install on a new machine (no clone needed):
 ```bash
-nix profile install 'github:junhyeokahn/dotfiles?dir=install/nvim#nvim'
+nix profile add 'github:junhyeokahn/dotfiles?dir=install/nvim#nvim'
 ```
 - Pull latest config + plugin versions on a machine with no clone
 ```bash
