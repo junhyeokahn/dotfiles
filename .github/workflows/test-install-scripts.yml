@@ -34,6 +34,7 @@ jobs:
           filters: |
             nvim:
               - 'install/nvim/**'
+              - '.github/scripts/verify-nvim.lua'
               - '.github/workflows/test-install-scripts.yml'
             kitty:
               - 'install/kitty.sh'

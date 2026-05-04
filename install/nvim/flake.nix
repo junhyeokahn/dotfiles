@@ -58,6 +58,7 @@
           ripgrep
           fd
           nodejs
+          git
         ];
 
         configDir = ./config;

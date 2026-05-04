@@ -3,25 +3,11 @@ require("todo-comments").setup({
 })
 
 local ts = require("nvim-treesitter")
-local parsers = {
-  "bash",
-  "cpp",
-  "diff",
-  "html",
-  "lua",
-  "luadoc",
-  "markdown",
-  "markdown_inline",
-  "python",
-  "vim",
-  "vimdoc",
-  "yaml",
-}
 
 ts.setup({})
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = parsers,
+  pattern = "*",
   callback = function(args)
     local ft = vim.bo[args.buf].filetype
 

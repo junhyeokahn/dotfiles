@@ -14,6 +14,8 @@ Personal development environment configuration files and installation scripts.
 
 Neovim is managed as a Nix package (binary + plugins + LSP servers baked in). Requires [Nix](https://github.com/DeterminateSystems/nix-installer) to be installed first: `curl -fsSL https://install.determinate.systems/nix | sh -s -- install`
 
+The `zk` binary is **not** bundled in the flake. The zk-nvim plugin still loads, but `<leader>z*` keymaps and the markdown LSP attach require `zk` on `PATH` — run `bash install/zk.sh` if you want those features.
+
 ### nvim workflows
 - Install on a new machine (with dotfiles cloned):
 ```bash
