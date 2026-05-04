@@ -33,9 +33,7 @@ jobs:
         with:
           filters: |
             nvim:
-              - 'install/nvim.sh'
-              - 'install/lib/common.sh'
-              - 'nvim/**'
+              - 'install/nvim/**'
               - '.github/workflows/test-install-scripts.yml'
             kitty:
               - 'install/kitty.sh'
