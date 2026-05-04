@@ -73,7 +73,7 @@ jobs:
 
       - name: Install nvim from flake
         shell: bash
-        run: nix profile install ./install/nvim#nvim
+        run: nix profile add ./install/nvim#nvim
 
       - name: Verify nvim installation
         shell: bash
