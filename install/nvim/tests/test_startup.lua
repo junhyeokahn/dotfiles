@@ -12,6 +12,11 @@ T["startup produces no errors"] = function()
   eq(child.cmd_capture "messages", "")
 end
 
+-- LuaJIT leaves a non-nil sentinel in package.loaded while a module is loading,
+-- even if the loader throws. This detects omitted `require` statements that silently
+-- corrupt the config, but cannot pinpoint which module broke — it passes outright
+-- if the terminal module (plugins.zk) throws. The "startup produces no errors" test
+-- is the reliable guard against throwing modules.
 T["every config module loaded"] = function()
   local modules = {
     "config.options",
