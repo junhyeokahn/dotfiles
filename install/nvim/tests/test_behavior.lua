@@ -102,6 +102,68 @@ T["lua_ls attaches and completes"] = function()
     end, 300)
   ]]
   MiniTest.expect.no_equality(child.lua_get "#_G.items", 0)
+
+  -- The check above only proves *some* completion came back, which is not
+  -- proof of anything -- see the comment on commit 145bf89 for how this bit
+  -- the suite before: without Lua.runtime/Lua.workspace.library, lua_ls has
+  -- no idea `vim` exists, and completion at this exact position (right after
+  -- "vim.g." in config/options.lua) fell back to scraping this repo's own
+  -- lua files for the name "g" (`clipboard`, `mapleader`, `maplocalleader`)
+  -- -- 3 non-empty items, zero `vim` knowledge, and the old count-only
+  -- assertion passed anyway.
+  --
+  -- The obvious fix is "poll until `have_nerd_font` (a real vim.g member set
+  -- by config/options.lua) shows up in the completion labels instead of
+  -- until the list is merely non-empty" -- and that's what a first version
+  -- of this test did. It was reverted: probing it directly against this
+  -- flake's pinned lua-language-server (by editing this exact file/position
+  -- through the real wrapped nvim, both with and without 145bf89, waiting up
+  -- to 90s) showed completion at "vim.g." never offers `have_nerd_font` even
+  -- with the fix correctly applied -- lua_ls resolves `vim.g`'s type from
+  -- the runtime library as an index-signature-only table (any -> any, no
+  -- static field list), so once it has real type info it stops doing the
+  -- fallback name-scrape that produced `clipboard`/`mapleader` in the first
+  -- place. Asserting on a completion label here would fail red even when
+  -- everything is correct, which is exactly the false-negative Finding 2 was
+  -- raised to prevent -- so this does not do that.
+  --
+  -- What IS a real, verified content signal: 145bf89's own commit message
+  -- names the directly observable symptom -- "Undefined global `vim`" on
+  -- every line that touches vim.*. Probing (same method as above, sampling
+  -- vim.diagnostic.get(0) once a second) showed this is fast and stable: 25
+  -- such diagnostics on this exact buffer by 1s after attach without the
+  -- fix, 0 by 1s with it, unchanged for the next 20s in both cases -- unlike
+  -- completion, it does not depend on the multi-second workspace-wide scan.
+  --
+  -- Two ways of turning that into "wait, then assert" were tried and
+  -- rejected because they never fire on a correctly-fixed config (i.e. they
+  -- ran out the full budget and reported false negatives): the
+  -- vim.diagnostic-level DiagnosticChanged autocmd, which in practice
+  -- doesn't fire here when there's nothing to report, and hooking the raw
+  -- textDocument/publishDiagnostics handler, which here fired for several
+  -- other files lua_ls happened to be background-diagnosing but never for
+  -- this one within the budget. So this polls vim.diagnostic.get(0)
+  -- directly instead, exiting the instant the bad diagnostic shows up
+  -- (fast, correct red); if it never shows up in 5s -- 5x the measured
+  -- worst case, and still well under this test's other budgets -- that's
+  -- treated as a real, settled "no `vim`-undefined diagnostic", not an
+  -- unsettled one.
+  local clean = child.lua_get [[
+    (function()
+      local bad = false
+      vim.wait(5000, function()
+        for _, d in ipairs(vim.diagnostic.get(0)) do
+          if d.message:find "Undefined global" and d.message:find "vim" then
+            bad = true
+            return true
+          end
+        end
+        return false
+      end, 100)
+      return not bad
+    end)()
+  ]]
+  eq(clean, true)
 end
 
 return T

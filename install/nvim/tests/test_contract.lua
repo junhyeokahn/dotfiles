@@ -90,6 +90,15 @@ T["completion: cmp and luasnip APIs"] = function()
   -- vim.is_callable instead of folding it into expect_functions.
   eq(child.lua_get 'vim.is_callable(require("cmp").setup)', true)
   expect_functions {
+    -- plugins/lsp.lua also pcalls this: `local ok, cmp_nvim_lsp = pcall(require,
+    -- "cmp_nvim_lsp")`. Unlike zk.lua, a failed require there doesn't stop
+    -- lsp.lua from running (no early return), so it can't be caught by a
+    -- keymap check -- it silently just never merges cmp's capabilities into
+    -- any LSP client, which is invisible to this test suite otherwise. This
+    -- is a pure-Lua module (part of the cmp plugin family, no external
+    -- binary), so asserting it loads is safe on a runner without the `zk`
+    -- binary or any language server installed.
+    'require("cmp_nvim_lsp").default_capabilities',
     'require("cmp").mapping.preset.insert',
     'require("cmp").mapping.select_next_item',
     'require("cmp").mapping.select_prev_item',
@@ -121,6 +130,23 @@ T["keymaps registered"] = function()
     { "<leader>ha", "n" }, -- harpoon
     { "<leader>f", "n" }, -- conform
     { "<leader>-", "n" }, -- oil float
+    -- plugins/zk.lua opens with `local ok, zk = pcall(require, "zk"); if not
+    -- ok then return end`. If the require ever breaks (e.g. zk-nvim renamed
+    -- or dropped by a nixpkgs bump), that pcall swallows the error and the
+    -- whole file returns early -- no keymaps, no error, nothing else in this
+    -- suite notices (see test_startup.lua's "every config module loaded"
+    -- comment). These map() calls are the last statements in the file, so
+    -- any one of them being registered proves the require succeeded and the
+    -- file ran to completion. This does not depend on the `zk` binary itself
+    -- being on PATH (deliberately not bundled in the flake, see README) --
+    -- zk.setup() and vim.keymap.set() are pure Lua/zk-nvim calls that don't
+    -- shell out.
+    { "<leader>zn", "n" }, -- zk: new note
+    { "<leader>zo", "n" }, -- zk: open notes
+    { "<leader>zz", "n" }, -- zk: open last modified note
+    { "<leader>zm", "n" }, -- zk: new meeting note
+    { "<leader>zd", "n" }, -- zk: open/create daily note
+    { "<leader>zt", "n" }, -- zk: tags
   }
   for _, k in ipairs(keys) do
     local got = child.lua_get("vim.fn.maparg(...) ~= ''", { k[1], k[2] })
