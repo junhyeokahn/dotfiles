@@ -101,9 +101,14 @@
               tests="${./tests}"
             fi
 
-            exec nvim --headless \
+            status=0
+            nvim --headless \
               --cmd "lua vim.g.nvim_tests_dir = '$tests'" \
-              -c "luafile $tests/run.lua"
+              -c "luafile $tests/run.lua" || status=$?
+
+            rm -rf "$tmp"
+            trap - EXIT
+            exit "$status"
           '';
         };
       in {
