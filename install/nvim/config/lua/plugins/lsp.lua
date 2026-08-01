@@ -101,9 +101,6 @@ local servers = {
         telemetry = {
           enable = false,
         },
-        -- Without this, lua_ls has no idea `vim` exists (it shows up as an
-        -- "Undefined global" diagnostic) and offers zero completions on any
-        -- vim.* path, which defeats the point of running it on this config.
         runtime = {
           version = "LuaJIT",
         },
