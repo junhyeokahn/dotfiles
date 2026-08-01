@@ -51,7 +51,7 @@
           lua-language-server
           basedpyright
           clang-tools
-          nodePackages.bash-language-server
+          bash-language-server
           stylua
           python3Packages.yapf
           fzf
@@ -82,9 +82,43 @@
           wrapperArgs = neovimConfig.wrapperArgs
             ++ [ "--prefix" "PATH" ":" (pkgs.lib.makeBinPath extraBinaries) ];
         });
+
+        nvimTest = pkgs.writeShellApplication {
+          name = "nvim-test";
+          runtimeInputs = [ nvim pkgs.coreutils ];
+          text = ''
+            tmp="$(mktemp -d)"
+            trap 'rm -rf "$tmp"' EXIT
+            export XDG_DATA_HOME="$tmp/data"
+            export XDG_STATE_HOME="$tmp/state"
+            export XDG_CACHE_HOME="$tmp/cache"
+            mkdir -p "$XDG_DATA_HOME" "$XDG_STATE_HOME" "$XDG_CACHE_HOME"
+
+            # Mirror the live-or-baked pattern the config itself uses, so local
+            # edits are testable without committing them for nix to see.
+            tests="$HOME/dotfiles/install/nvim/tests"
+            if [ ! -d "$tests" ]; then
+              tests="${./tests}"
+            fi
+
+            status=0
+            nvim --headless \
+              --cmd "lua vim.g.nvim_tests_dir = '$tests'" \
+              -c "luafile $tests/run.lua" || status=$?
+
+            rm -rf "$tmp"
+            trap - EXIT
+            exit "$status"
+          '';
+        };
       in {
         packages.nvim = nvim;
+        packages.test = nvimTest;
         packages.default = nvim;
+        apps.test = {
+          type = "app";
+          program = "${nvimTest}/bin/nvim-test";
+        };
       }
     );
 }
