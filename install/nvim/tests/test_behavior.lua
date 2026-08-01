@@ -17,7 +17,20 @@ T["conform formats python with yapf"] = function()
   child.lua [[
     vim.api.nvim_buf_set_lines(0, 0, -1, false, { "x   =    1" })
     vim.bo.filetype = "python"
-    require("conform").format { bufnr = 0, async = false, lsp_format = "never" }
+    -- conform's default timeout_ms is 1000. That's tight for the *first*
+    -- ever process spawn out of a freshly restarted child: process creation
+    -- plus python/yapf interpreter startup can eat most or all of a second
+    -- before yapf has produced a single byte, with zero relation to whether
+    -- yapf actually works. That's not a rare edge case here - pre_case
+    -- restarts the child before every test (see helpers.lua), so this is a
+    -- cold first spawn on every single run, local or CI, and CI runners in
+    -- particular have no warm OS/page cache to shorten it further. Give the
+    -- call a generous, bounded budget to absorb that one-time startup cost.
+    -- This does not paper over a real formatter regression: if yapf is
+    -- actually broken (bad output, crash, or a genuine hang) the buffer
+    -- still won't equal the expected result below, and the timeout still
+    -- bounds how long a truly hung process can block the suite.
+    require("conform").format { bufnr = 0, async = false, lsp_format = "never", timeout_ms = 15000 }
   ]]
   eq(child.lua_get "vim.api.nvim_buf_get_lines(0, 0, 1, false)[1]", "x = 1")
 end

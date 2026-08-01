@@ -34,7 +34,6 @@ jobs:
           filters: |
             nvim:
               - 'install/nvim/**'
-              - '.github/scripts/verify-nvim.lua'
               - '.github/workflows/test-install-scripts.yml'
             kitty:
               - 'install/kitty.sh'
@@ -82,17 +81,9 @@ jobs:
           which nvim
           nvim --version | head -5
 
-      - name: Test nvim startup
+      - name: Run nvim test suite
         shell: bash
-        run: |
-          export PATH="$HOME/.nix-profile/bin:$PATH"
-          nvim --headless "+qa"
-
-      - name: Verify plugins and bundled tools load
-        shell: bash
-        run: |
-          export PATH="$HOME/.nix-profile/bin:$PATH"
-          nvim --headless -c "luafile .github/scripts/verify-nvim.lua" +qa
+        run: nix run ./install/nvim#test
 
   test-kitty-install:
     needs: changes
