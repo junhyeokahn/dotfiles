@@ -2,6 +2,9 @@ vim.g.have_nerd_font = true
 
 vim.opt.breakindent = true
 vim.opt.clipboard = "unnamedplus"
+if vim.env.SSH_TTY then
+  vim.g.clipboard = "osc52"
+end
 vim.opt.cursorline = true
 vim.opt.hlsearch = true
 vim.opt.ignorecase = true
