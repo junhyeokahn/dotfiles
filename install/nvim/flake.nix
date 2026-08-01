@@ -51,7 +51,7 @@
           lua-language-server
           basedpyright
           clang-tools
-          nodePackages.bash-language-server
+          bash-language-server
           stylua
           python3Packages.yapf
           fzf
